@@ -1,0 +1,2911 @@
+<!DOCTYPE html>
+<html lang="th"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxNzEzNjk4MDQ2MDUxNjcyNTQzOCIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzQ5NWFjMjBjNTAyN2U4NDBfcWRfaW50ZXJhY3RpdmVfcHJlc2VudGF0aW9uLmh0bWwtNDQifSwiZXhwIjoxNzk0NDcwOTM1LCJpYXQiOjE3OTQ0NjczMzUsImFsZyI6IlJTMjU2In0.TFId6IBf5FGUF1qccbksjZoWXLZFeifW0RQge9y1k5Jji7DpQZsJFf_EdyIPPuF893pasYUWRi0Wm3lAmdfs64UOQDt9EiZtCk__y39qgE2dm4t4F3OGN-G1bSsludfy1oud9c2qUgbdNfNiMC9GxqU4V5Oakqo_Kasan8_lr97bkjBq8HvuwZWt_YjY9wEqhiTxGCYCn-Xk6nKrBbiZfTaYa-rWjK9gZ_2hvjg3EpOc1pZ4oxXn4pj4TSieV8f5q8xZ9D59Owklrrd0-aJepiWWp3PuIWB1jSDul33_Ywot0246rwdYk4cWhGCiaw8LyhB4rKwhpi1yYofuAudBNA","c_495ac20c5027e840_qd_interactive_presentation.html-44")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.j=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.i="";var l=0,t=null,r=null,q=[],F=new TextEncoder,G=new TextDecoder;
+c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*16|0;return(f===
+"x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;(g=t)==null||g.postMessage(a)}};
+Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
+  function normalizeSlug(str) {
+    try {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^p{L}p{N}s_-]/gu, '')
+        .replace(/s+/g, '-');
+    } catch (e) {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9s_-]/g, '')
+        .replace(/s+/g, '-');
+    }
+  }
+
+  function findTargetElement(hash) {
+    if (!hash || hash === '#') {
+      return null;
+    }
+    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {
+      // Ignore URI malformed errors.
+    }
+
+    // 1. Direct ID match (raw and decoded).
+    let target = document.getElementById(rawId) || document.getElementById(decodedId);
+    if (target) {
+      return target;
+    }
+
+    // 2. Name attribute match (<a name="...">).
+    try {
+      if (typeof CSS !== 'undefined' && CSS.escape) {
+        target =
+          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
+          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
+      } else {
+        const namedElements = document.getElementsByName(rawId);
+        if (namedElements && namedElements.length > 0) {
+          return namedElements[0];
+        }
+      }
+    } catch (e) {
+      // Ignore querySelector syntax errors.
+    }
+    if (target) {
+      return target;
+    }
+
+    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
+    const targetSlug = normalizeSlug(decodedId);
+    if (targetSlug) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        if (normalizeSlug(heading.textContent || '') === targetSlug) {
+          return heading;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
+    if (!anchor) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (
+      !href ||
+      href.trim().toLowerCase().startsWith('javascript:') ||
+      anchor.hasAttribute('download')
+    ) {
+      return;
+    }
+
+    // Check if the link is an in-page hash / anchor link.
+    if (href.startsWith('#')) {
+      event.preventDefault();
+      const targetElement = findTargetElement(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      return;
+    }
+
+    // Check if the URL has the same origin/pathname but with a hash.
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.hash &&
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname
+      ) {
+        event.preventDefault();
+        const targetElement = findTargetElement(url.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        return;
+      }
+    } catch (e) {
+      // Fall through if URL parsing fails.
+    }
+
+    // For all external or full navigation links, prevent iframe-level navigation
+    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
+    // safely in a new tab/window.
+    if (anchor.target !== '_blank') {
+      event.preventDefault();
+      window.open(anchor.href, '_blank', 'noopener,noreferrer');
+    }
+  }, {capture: true});
+})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>การวิจัยเชิงคุณภาพแบบพรรณนา (Qualitative Descriptive Research - QD)</title>
+  <!-- Google Fonts: Prompt & Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&amp;family=Sarabun:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            skytheme: {
+              bg: '#F0F9FF',
+              soft: '#E0F2FE',
+              border: '#BAE6FD',
+              light: '#38BDF8',
+              accent: '#0EA5E9',
+              primary: '#0284C7',
+              deep: '#0369A1',
+              navy: '#0F172A'
+            }
+          },
+          fontFamily: {
+            heading: ['Prompt', 'sans-serif'],
+            body: ['Sarabun', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background-color: #F0F9FF;
+      color: #0F172A;
+    }
+    h1, h2, h3, h4, h5, h6, .font-heading {
+      font-family: 'Prompt', sans-serif;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F0F9FF;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #BAE6FD;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0284C7;
+    }
+    .academic-card-shadow {
+      box-shadow: 0 12px 32px -8px rgba(2, 132, 199, 0.12), 0 4px 12px -4px rgba(14, 165, 233, 0.08);
+    }
+    .fade-slide-in {
+      animation: fadeSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.bottom-16{bottom:4rem}.left-0{left:0px}.left-3{left:0.75rem}.right-0{right:0px}.right-2\.5{right:0.625rem}.right-4{right:1rem}.top-0{top:0px}.top-2{top:0.5rem}.top-2\.5{top:0.625rem}.z-20{z-index:20}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-auto{margin-top:auto;margin-bottom:auto}.mb-4{margin-bottom:1rem}.mt-6{margin-top:1.5rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-9{height:2.25rem}.h-full{height:100%}.h-screen{height:100vh}.min-h-\[500px\]{min-height:500px}.w-0{width:0px}.w-12{width:3rem}.w-72{width:18rem}.w-9{width:2.25rem}.w-full{width:100%}.min-w-0{min-width:0px}.max-w-5xl{max-width:64rem}.max-w-7xl{max-width:80rem}.shrink-0{flex-shrink:0}.flex-grow{flex-grow:1}.-translate-x-full{--tw-translate-x:-100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-3\.5{gap:0.875rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-\[\#38BDF8\]{--tw-border-opacity:1;border-color:rgb(56 189 248 / var(--tw-border-opacity, 1))}.border-sky-100{--tw-border-opacity:1;border-color:rgb(224 242 254 / var(--tw-border-opacity, 1))}.border-sky-200{--tw-border-opacity:1;border-color:rgb(186 230 253 / var(--tw-border-opacity, 1))}.border-sky-200\/90{border-color:rgb(186 230 253 / 0.9)}.border-sky-300{--tw-border-opacity:1;border-color:rgb(125 211 252 / var(--tw-border-opacity, 1))}.bg-\[\#0F172A\]{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-\[\#0F172A\]\/75{background-color:rgb(15 23 42 / 0.75)}.bg-\[\#E0F2FE\]{--tw-bg-opacity:1;background-color:rgb(224 242 254 / var(--tw-bg-opacity, 1))}.bg-\[\#F0F9FF\]{--tw-bg-opacity:1;background-color:rgb(240 249 255 / var(--tw-bg-opacity, 1))}.bg-\[\#F0F9FF\]\/70{background-color:rgb(240 249 255 / 0.7)}.bg-slate-900\/30{background-color:rgb(15 23 42 / 0.3)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/95{background-color:rgb(255 255 255 / 0.95)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-\[\#0284C7\]{--tw-gradient-from:#0284C7 var(--tw-gradient-from-position);--tw-gradient-to:rgb(2 132 199 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-\[\#38BDF8\]{--tw-gradient-from:#38BDF8 var(--tw-gradient-from-position);--tw-gradient-to:rgb(56 189 248 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-\[\#F0F9FF\]{--tw-gradient-from:#F0F9FF var(--tw-gradient-from-position);--tw-gradient-to:rgb(240 249 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-\[\#0EA5E9\]{--tw-gradient-to:rgb(14 165 233 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #0EA5E9 var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-\[\#E0F2FE\]\/60{--tw-gradient-to:rgb(224 242 254 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), rgb(224 242 254 / 0.6) var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-\[\#0284C7\]{--tw-gradient-to:#0284C7 var(--tw-gradient-to-position)}.to-\[\#0EA5E9\]{--tw-gradient-to:#0EA5E9 var(--tw-gradient-to-position)}.to-\[\#F0F9FF\]{--tw-gradient-to:#F0F9FF var(--tw-gradient-to-position)}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-3\.5{padding-top:0.875rem;padding-bottom:0.875rem}.pl-8{padding-left:2rem}.pr-7{padding-right:1.75rem}.pt-3\.5{padding-top:0.875rem}.text-center{text-align:center}.font-heading{font-family:Prompt, sans-serif}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.tracking-wide{letter-spacing:0.025em}.text-\[\#0284C7\]{--tw-text-opacity:1;color:rgb(2 132 199 / var(--tw-text-opacity, 1))}.text-\[\#0EA5E9\]{--tw-text-opacity:1;color:rgb(14 165 233 / var(--tw-text-opacity, 1))}.text-\[\#0F172A\]{--tw-text-opacity:1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.text-\[\#38BDF8\]{--tw-text-opacity:1;color:rgb(56 189 248 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.placeholder-slate-400::placeholder{--tw-placeholder-opacity:1;color:rgb(148 163 184 / var(--tw-placeholder-opacity, 1))}.opacity-0{opacity:0}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.hover\:bg-\[\#E0F2FE\]:hover{--tw-bg-opacity:1;background-color:rgb(224 242 254 / var(--tw-bg-opacity, 1))}.hover\:bg-\[\#F0F9FF\]:hover{--tw-bg-opacity:1;background-color:rgb(240 249 255 / var(--tw-bg-opacity, 1))}.hover\:bg-rose-50:hover{--tw-bg-opacity:1;background-color:rgb(255 241 242 / var(--tw-bg-opacity, 1))}.hover\:from-\[\#0369A1\]:hover{--tw-gradient-from:#0369A1 var(--tw-gradient-from-position);--tw-gradient-to:rgb(3 105 161 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-\[\#0284C7\]:hover{--tw-gradient-to:#0284C7 var(--tw-gradient-to-position)}.hover\:text-\[\#0284C7\]:hover{--tw-text-opacity:1;color:rgb(2 132 199 / var(--tw-text-opacity, 1))}.hover\:text-rose-600:hover{--tw-text-opacity:1;color:rgb(225 29 72 / var(--tw-text-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-\[\#38BDF8\]:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(56 189 248 / var(--tw-ring-opacity, 1))}.disabled\:pointer-events-none:disabled{pointer-events:none}.disabled\:opacity-40:disabled{opacity:0.4}@media (min-width: 640px){.sm\:right-6{right:1.5rem}.sm\:inline{display:inline}.sm\:flex{display:flex}.sm\:min-h-\[550px\]{min-height:550px}.sm\:w-80{width:20rem}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:gap-2{gap:0.5rem}.sm\:gap-3{gap:0.75rem}.sm\:p-6{padding:1.5rem}.sm\:p-8{padding:2rem}.sm\:px-3{padding-left:0.75rem;padding-right:0.75rem}.sm\:px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.sm\:px-5{padding-left:1.25rem;padding-right:1.25rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}.sm\:text-xs{font-size:0.75rem;line-height:1rem}}@media (min-width: 768px){.md\:relative{position:relative}.md\:inline{display:inline}.md\:hidden{display:none}.md\:translate-x-0{--tw-translate-x:0px;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:p-10{padding:2.5rem}.md\:p-8{padding:2rem}.md\:text-base{font-size:1rem;line-height:1.5rem}.md\:shadow-none{--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}}@media (min-width: 1024px){.lg\:inline{display:inline}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}@media (min-width: 1280px){.xl\:flex{display:flex}.xl\:grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}}</style></head>
+<body class="h-screen flex flex-col overflow-hidden bg-[#F0F9FF] text-[#0F172A]">
+
+  <!-- Top Progress Bar -->
+  <div class="w-full bg-[#E0F2FE] h-1.5 z-50 shrink-0">
+    <div id="progressBar" class="bg-gradient-to-r from-[#38BDF8] via-[#0EA5E9] to-[#0284C7] h-full w-0 transition-all duration-300"></div>
+  </div>
+
+  <!-- Top Navigation & Control Header -->
+  <header class="bg-white/95 backdrop-blur-md border-b border-sky-200 px-3 sm:px-5 py-2.5 flex items-center justify-between z-40 shrink-0 shadow-xs">
+    <!-- Left: Sidebar Toggle & Brand -->
+    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <button id="toggleSidebarBtn" title="ซ่อน/แสดง สารบัญสไลด์" class="p-2.5 rounded-xl bg-[#F0F9FF] hover:bg-[#E0F2FE] text-[#0284C7] border border-sky-200 transition shrink-0">
+        <i class="fa-solid fa-bars-staggered text-base"></i>
+      </button>
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] text-white text-[11px] sm:text-xs px-2.5 py-1 rounded-full font-heading font-semibold tracking-wide shrink-0 shadow-xs">
+          QD RESEARCH
+        </span>
+        <h1 class="text-xs sm:text-sm md:text-base font-heading font-bold text-[#0F172A] truncate">
+          การวิจัยเชิงคุณภาพแบบพรรณนา
+        </h1>
+      </div>
+    </div>
+
+    <!-- Center: Current Module Indicator -->
+    <div class="hidden xl:flex items-center gap-2 px-3.5 py-1.5 bg-[#F0F9FF] rounded-full border border-sky-200 text-xs text-[#0284C7] font-heading font-medium">
+      <i class="fa-solid fa-layer-group text-[#0EA5E9]"></i>
+      <span id="moduleBadge">หมวด 1: บทนำและรากฐานแนวคิด</span>
+    </div>
+
+    <!-- Right: Action Toolbar -->
+    <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <!-- Download HTML File Button -->
+      <button id="downloadHtmlBtn" onclick="downloadSelfContainedHtml()" title="ดาวน์โหลดไฟล์ .HTML เพื่ออัปโหลดสร้างลิงก์แชร์" class="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] hover:from-[#0369A1] hover:to-[#0284C7] text-white text-xs font-heading font-semibold rounded-xl transition shadow-sm">
+        <i class="fa-solid fa-cloud-arrow-down"></i>
+        <span class="hidden md:inline">ดาวน์โหลดไฟล์ .HTML</span>
+      </button>
+
+      <!-- Copy Direct Slide Link Button -->
+      <button id="copyLinkBtn" onclick="copyCurrentSlideLink()" title="คัดลอกลิงก์หน้าสไลด์ปัจจุบัน (#slide=N)" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 bg-[#F0F9FF] hover:bg-[#E0F2FE] text-[#0284C7] text-xs font-heading font-semibold rounded-xl transition border border-sky-200">
+        <i class="fa-solid fa-link"></i>
+        <span class="hidden sm:inline">คัดลอกลิงก์</span>
+      </button>
+
+      <!-- Grid Overview Button -->
+      <button id="gridModalBtn" onclick="openGridModal()" title="มุมมองภาพรวมทั้งหมด 49 สไลด์" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 bg-white hover:bg-[#F0F9FF] text-[#0F172A] text-xs font-heading font-medium rounded-xl transition border border-sky-200">
+        <i class="fa-solid fa-grip text-[#0284C7]"></i>
+        <span class="hidden lg:inline">ภาพรวม</span>
+      </button>
+
+      <!-- Fullscreen Button -->
+      <button id="fullscreenBtn" onclick="toggleFullscreen()" title="ขยายเต็มหน้าจอ" class="p-2 rounded-xl bg-white hover:bg-[#F0F9FF] text-[#0284C7] text-xs transition border border-sky-200">
+        <i id="fullscreenIcon" class="fa-solid fa-expand"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <div class="flex-grow flex relative overflow-hidden">
+
+    <!-- Collapsible Sidebar Table of Contents -->
+    <aside id="sidebar" class="w-72 sm:w-80 bg-white border-r border-sky-200 flex flex-col transition-all duration-300 z-30 shrink-0 absolute md:relative h-full shadow-lg md:shadow-none -translate-x-full md:translate-x-0">
+      <!-- Live Keyword Search Filter -->
+      <div class="p-3 bg-[#F0F9FF]/70 border-b border-sky-200">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-[#0284C7] text-xs"></i>
+          <input type="text" id="searchInput" oninput="filterSlides()" placeholder="ค้นหาหัวข้อหรือคำสำคัญ..." class="w-full bg-white text-[#0F172A] placeholder-slate-400 text-xs rounded-xl pl-8 pr-7 py-2 border border-sky-200 focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-2.5 top-2 text-slate-400 hover:text-[#0284C7] text-xs">
+            <i class="fa-solid fa-circle-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Slide List -->
+      <div id="slideList" class="flex-grow overflow-y-auto p-2.5 space-y-1">
+        <!-- Populated dynamically via JS -->
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="p-3 bg-[#F0F9FF] border-t border-sky-200 text-center text-[11px] text-slate-500 font-medium">
+        หลักสูตรระดับปริญญาโท • ทั้งหมด 49 สไลด์
+      </div>
+    </aside>
+
+    <!-- Mobile Backdrop for Sidebar -->
+    <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 bg-slate-900/30 backdrop-blur-xs z-20 hidden md:hidden"></div>
+
+    <!-- Main Slide Stage -->
+    <main id="slideStage" class="flex-grow flex flex-col justify-between items-center p-3 sm:p-6 md:p-8 bg-gradient-to-br from-[#F0F9FF] via-[#E0F2FE]/60 to-[#F0F9FF] overflow-y-auto relative w-full">
+      
+      <!-- Slide Card Container -->
+      <div class="w-full max-w-5xl my-auto flex flex-col justify-center">
+        <article id="slideCard" class="bg-white rounded-3xl border border-sky-200/90 academic-card-shadow p-5 sm:p-8 md:p-10 text-[#0F172A] min-h-[500px] sm:min-h-[550px] flex flex-col justify-between relative overflow-hidden">
+          
+          <!-- Decorative Top Soft Blue Accent Strip -->
+          <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#38BDF8] via-[#0EA5E9] to-[#0284C7]"></div>
+
+          <!-- Dynamic Slide Body -->
+          <div id="slideContent" class="flex-grow flex flex-col justify-center">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Slide Citation & Page Number Footer -->
+          <div class="mt-6 pt-3.5 border-t border-sky-100 flex flex-wrap justify-between items-center gap-2 text-xs">
+            <div id="slideReference" class="flex items-center gap-2">
+              <!-- Rendered by JS -->
+            </div>
+            <div id="slideNumberBadge" class="bg-[#F0F9FF] text-[#0284C7] font-heading font-semibold px-3.5 py-1 rounded-full border border-sky-200 shrink-0">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </article>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Bottom Presentation Control Bar -->
+  <footer class="bg-white border-t border-sky-200 px-3 sm:px-6 py-2.5 flex items-center justify-between z-40 shrink-0">
+    <!-- Previous Button -->
+    <button id="prevBtn" onclick="prevSlide()" class="flex items-center gap-2 px-3.5 sm:px-5 py-2.5 bg-[#F0F9FF] hover:bg-[#E0F2FE] disabled:opacity-40 disabled:pointer-events-none text-[#0284C7] rounded-xl transition text-xs sm:text-sm font-heading font-semibold border border-sky-200">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>ก่อนหน้า</span>
+    </button>
+
+    <!-- Center Counter & Quick Jump -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <button onclick="firstSlide()" title="ไปสไลด์แรก (Home)" class="hidden sm:flex items-center justify-center w-9 h-9 rounded-xl bg-[#F0F9FF] hover:bg-[#E0F2FE] text-[#0284C7] border border-sky-200 text-xs transition">
+        <i class="fa-solid fa-backward-step"></i>
+      </button>
+
+      <div class="flex items-center gap-2 bg-[#F0F9FF] px-3.5 py-1.5 rounded-xl border border-sky-200 text-xs sm:text-sm font-heading">
+        <span class="text-slate-500 hidden sm:inline">สไลด์</span>
+        <input type="number" id="slideInput" min="1" max="49" value="1" onchange="jumpToInputValue(this.value)" aria-label="หมายเลขสไลด์" class="w-12 bg-white text-[#0284C7] font-bold text-center rounded-lg border border-sky-300 py-0.5 focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
+        <span class="text-slate-600 font-semibold">/ 49</span>
+      </div>
+
+      <button onclick="lastSlide()" title="ไปสไลด์สุดท้าย (End)" class="hidden sm:flex items-center justify-center w-9 h-9 rounded-xl bg-[#F0F9FF] hover:bg-[#E0F2FE] text-[#0284C7] border border-sky-200 text-xs transition">
+        <i class="fa-solid fa-forward-step"></i>
+      </button>
+    </div>
+
+    <!-- Next Button -->
+    <button id="nextBtn" onclick="nextSlide()" class="flex items-center gap-2 px-4 sm:px-6 py-2.5 bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] hover:from-[#0369A1] hover:to-[#0284C7] disabled:opacity-40 disabled:pointer-events-none text-white rounded-xl transition text-xs sm:text-sm font-heading font-semibold shadow-sm">
+      <span>ถัดไป</span>
+      <i class="fa-solid fa-arrow-right"></i>
+    </button>
+  </footer>
+
+  <!-- Grid Overview Modal (All 49 Slides Thumbnails) -->
+  <div id="gridModal" class="fixed inset-0 bg-[#0F172A]/75 backdrop-blur-sm z-50 hidden flex-col p-4 sm:p-6 md:p-8">
+    <div class="flex justify-between items-center mb-4 max-w-7xl mx-auto w-full bg-white px-5 py-3.5 rounded-2xl border border-sky-200 shadow-md">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center">
+          <i class="fa-solid fa-grip text-lg"></i>
+        </div>
+        <div>
+          <h2 class="text-base sm:text-lg font-heading font-bold text-[#0F172A]">ภาพรวมสไลด์ทั้งหมด (49 หน้า)</h2>
+          <p class="text-xs text-slate-500">คลิกที่การ์ดเพื่อกระโดดไปยังสไลด์ที่ต้องการทันที</p>
+        </div>
+      </div>
+      <button onclick="closeGridModal()" class="p-2.5 rounded-xl bg-[#F0F9FF] hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-sky-200 transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    
+    <div id="gridContainer" class="flex-grow overflow-y-auto max-w-7xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 p-1">
+      <!-- Populated dynamically via JS -->
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-16 right-4 sm:right-6 bg-[#0F172A] text-white border border-[#38BDF8] px-4 py-3 rounded-2xl shadow-xl text-xs sm:text-sm font-heading font-medium flex items-center gap-2.5 opacity-0 pointer-events-none transition-all duration-300 z-50">
+    <i class="fa-solid fa-circle-check text-[#38BDF8] text-base"></i>
+    <span id="toastMsg">ดำเนินการเรียบร้อย!</span>
+  </div>
+
+  <!-- Complete Data & Application Logic -->
+  <script>
+    // Capture pristine HTML source before dynamic rendering for clean .html file export
+    let pristineHtmlSource = "";
+
+    // =========================================================================
+    // ALL 49 SLIDES DATABASE (100% VERBATIM PRESERVATION)
+    // =========================================================================
+    const slidesData = [
+      // SLIDE 1
+      {
+        id: 1,
+        module: "หมวด 1: บทนำและรากฐานแนวคิด",
+        title: "การวิจัยเชิงคุณภาพแบบพรรณนา",
+        reference: "แหล่งอ้างอิง: Sandelowski (2000); Villamin et al. (2025)",
+        isCover: true,
+        content: `
+          <div class="text-center py-4 sm:py-6 flex flex-col items-center justify-center space-y-5">
+            <span class="inline-flex items-center gap-2 bg-[#E0F2FE] text-[#0284C7] font-heading text-xs sm:text-sm font-semibold px-4 py-1.5 rounded-full border border-sky-200">
+              <i class="fa-solid fa-graduation-cap text-[#0EA5E9]"></i>
+              บทเรียนสำหรับนักศึกษาปริญญาโท
+            </span>
+            <div class="space-y-2">
+              <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-[#0F172A] leading-tight">
+                การวิจัยเชิงคุณภาพแบบพรรณนา
+              </h1>
+              <p class="text-lg sm:text-2xl font-heading font-semibold text-[#0284C7]">
+                Qualitative Descriptive Research (QD)
+              </p>
+            </div>
+            <div class="bg-gradient-to-r from-[#F0F9FF] via-[#E0F2FE]/70 to-[#F0F9FF] p-5 rounded-2xl border border-sky-200 max-w-3xl text-[#0F172A] text-sm sm:text-lg leading-relaxed font-medium">
+              การศึกษาปรากฏการณ์ ประสบการณ์ และมุมมองของผู้ให้ข้อมูล เพื่อจัดทำคำบรรยายที่ครบถ้วนและใกล้เคียงข้อมูลต้นทาง
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl text-left pt-2">
+              <div class="bg-[#F0F9FF] p-4 rounded-2xl border border-sky-200 flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-white text-[#0284C7] flex items-center justify-center border border-sky-200 shrink-0 mt-0.5">
+                  <i class="fa-solid fa-compass-drafting"></i>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                  ครอบคลุมการออกแบบ การเลือกผู้ให้ข้อมูล การเก็บข้อมูล การวิเคราะห์ และความน่าเชื่อถือของผลการวิจัย
+                </p>
+              </div>
+              <div class="bg-[#F0F9FF] p-4 rounded-2xl border border-sky-200 flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-white text-[#0EA5E9] flex items-center justify-center border border-sky-200 shrink-0 mt-0.5">
+                  <i class="fa-regular fa-clock"></i>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                  ระยะเวลาเรียน 2 ชั่วโมง — บรรยายแบบมีส่วนร่วม พร้อมกิจกรรมเข้ารหัส จัดหมวดหมู่ และสังเคราะห์ธีมจากบทถอดเทปจำลอง
+                </p>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 2
+      {
+        id: 2,
+        module: "หมวด 1: บทนำและรากฐานแนวคิด",
+        title: "ปรัชญาการวิจัย (Research Philosophy)",
+        reference: "",
+        content: `
+          <div class="space-y-4">
+            <div class="bg-gradient-to-br from-[#F0F9FF] to-white p-5 rounded-2xl border border-sky-200 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center shrink-0 mt-0.5">
+                <i class="fa-solid fa-landmark text-lg"></i>
+              </div>
+              <p class="text-sm sm:text-base text-[#0F172A] leading-relaxed">
+                • ปรัชญาการวิจัยเป็นรากฐานที่กำหนดวิธีมองปัญหาและการตีความข้อค้นพบ ครอบคลุมธรรมชาติของความเป็นจริง (Ontology) การได้มาซึ่งความรู้ (Epistemology) และบทบาทของคุณค่า (Axiology)
+              </p>
+            </div>
+            <div class="bg-gradient-to-br from-[#F0F9FF] to-white p-5 rounded-2xl border border-sky-200 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center shrink-0 mt-0.5">
+                <i class="fa-solid fa-compass text-lg"></i>
+              </div>
+              <p class="text-sm sm:text-base text-[#0F172A] leading-relaxed">
+                • ความเข้าใจปรัชญาการวิจัยช่วยให้ออกแบบการศึกษาและเลือกวิธีวิจัยที่สอดคล้องกับคำถามวิจัย
+              </p>
+            </div>
+            <div class="bg-gradient-to-br from-[#F0F9FF] to-white p-5 rounded-2xl border border-sky-200 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center shrink-0 mt-0.5">
+                <i class="fa-solid fa-route text-lg"></i>
+              </div>
+              <p class="text-sm sm:text-base text-[#0F172A] leading-relaxed">
+                • ปรัชญาการวิจัยเป็นแนวทางประกอบการตัดสินใจตลอดกระบวนการวิจัย
+              </p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 3
+      {
+        id: 3,
+        module: "หมวด 1: บทนำและรากฐานแนวคิด",
+        title: "รากฐานทางปรัชญาของการวิจัย",
+        reference: "",
+        content: `
+          <div class="space-y-6 py-2">
+            <!-- 3 Connected Flow Diagram Boxes with Arrows -->
+            <div class="bg-gradient-to-r from-[#F0F9FF] via-[#E0F2FE]/60 to-[#F0F9FF] p-6 sm:p-8 rounded-3xl border border-sky-200">
+              <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="w-full md:flex-1 bg-white p-5 rounded-2xl border-2 border-[#38BDF8] shadow-sm text-center">
+                  <span class="inline-block bg-[#E0F2FE] text-[#0284C7] text-xs font-heading font-bold px-2.5 py-0.5 rounded-full mb-2">ระดับที่ 1</span>
+                  <h3 class="font-heading font-bold text-[#0F172A] text-base sm:text-lg">ปรัชญาการวิจัย</h3>
+                  <p class="text-xs sm:text-sm text-[#0284C7] font-medium mt-1">(Research Philosophy)</p>
+                </div>
+
+                <div class="text-[#0284C7] text-2xl shrink-0">
+                  <i class="fa-solid fa-arrow-right hidden md:inline"></i>
+                  <i class="fa-solid fa-arrow-down md:hidden"></i>
+                </div>
+
+                <div class="w-full md:flex-1 bg-white p-5 rounded-2xl border-2 border-[#0EA5E9] shadow-sm text-center">
+                  <span class="inline-block bg-[#E0F2FE] text-[#0284C7] text-xs font-heading font-bold px-2.5 py-0.5 rounded-full mb-2">ระดับที่ 2</span>
+                  <h3 class="font-heading font-bold text-[#0F172A] text-base sm:text-lg">ระเบียบวิธีวิจัย</h3>
+                  <p class="text-xs sm:text-sm text-[#0284C7] font-medium mt-1">(Research Methodology)</p>
+                </div>
+
+                <div class="text-[#0284C7] text-2xl shrink-0">
+                  <i class="fa-solid fa-arrow-right hidden md:inline"></i>
+                  <i class="fa-solid fa-arrow-down md:hidden"></i>
+                </div>
+
+                <div class="w-full md:flex-1 bg-white p-5 rounded-2xl border-2 border-[#0284C7] shadow-sm text-center">
+                  <span class="inline-block bg-[#E0F2FE] text-[#0284C7] text-xs font-heading font-bold px-2.5 py-0.5 rounded-full mb-2">ระดับที่ 3</span>
+                  <h3 class="font-heading font-bold text-[#0F172A] text-base sm:text-lg">วิธีดำเนินการวิจัย</h3>
+                  <p class="text-xs sm:text-sm text-[#0284C7] font-medium mt-1">(Research Methods)</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-[#F0F9FF] p-4 rounded-2xl border border-sky-200 flex items-start gap-3">
+              <i class="fa-solid fa-circle-info text-[#0284C7] mt-1 shrink-0"></i>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                แผนภาพตัวอย่างความสัมพันธ์ของปรัชญา–ระเบียบวิธี–วิธีวิจัย (Grounded Theory ใช้เพื่ออธิบายภาพต้นฉบับ ไม่ใช่เนื้อหาหลักของ QD)
+              </p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 4
+      {
+        id: 4,
+        module: "หมวด 1: บทนำและรากฐานแนวคิด",
+        title: "การวิจัยเชิงคุณภาพ (Qualitative Research)",
+        reference: "",
+        content: `
+          <div class="space-y-5 py-2">
+            <div class="bg-gradient-to-r from-[#F0F9FF] to-white p-6 rounded-2xl border-l-4 border-l-[#0284C7] border border-sky-200 shadow-xs">
+              <div class="flex items-center gap-2 text-[#0284C7] font-heading font-semibold text-sm mb-2">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                <span>การทำความเข้าใจเชิงลึกในบริบทจริง</span>
+              </div>
+              <p class="text-sm sm:text-base md:text-lg text-[#0F172A] leading-relaxed">
+                การวิจัยเชิงคุณภาพมุ่งรวบรวมข้อมูลเชิงลึกจากผู้คน เพื่อเข้าใจเหตุผล ความคิด และพฤติกรรมในบริบทชีวิตจริง โดยมักศึกษาอย่างละเอียดกับผู้ให้ข้อมูลจำนวนไม่มาก
+              </p>
+            </div>
+
+            <div class="bg-gradient-to-r from-[#E0F2FE]/50 to-white p-6 rounded-2xl border-l-4 border-l-[#0EA5E9] border border-sky-200 shadow-xs">
+              <div class="flex items-center gap-2 text-[#0284C7] font-heading font-semibold text-sm mb-2">
+                <i class="fa-solid fa-people-arrows"></i>
+                <span>การตีความและการให้ความหมายทางสังคม</span>
+              </div>
+              <p class="text-sm sm:text-base md:text-lg text-[#0F172A] leading-relaxed">
+                การวิจัยเชิงคุณภาพเป็นการสืบค้นทางสังคมที่เน้นวิธีที่ผู้คนตีความและให้ความหมายแก่ประสบการณ์ ตลอดจนทำความเข้าใจความเป็นจริงทางสังคมของบุคคล กลุ่ม และวัฒนธรรม
+              </p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 5
+      {
+        id: 5,
+        module: "หมวด 1: บทนำและรากฐานแนวคิด",
+        title: "Characteristics of qualitative research",
+        reference: "",
+        content: `
+          <div class="overflow-x-auto rounded-2xl border border-sky-200 shadow-xs">
+            <table class="w-full text-xs sm:text-sm text-left border-collapse">
+              <thead>
+                <tr class="bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] text-white font-heading">
+                  <th class="py-3 px-4 w-1/3 border-r border-sky-400/40">Characteristic</th>
+                  <th class="py-3 px-4">Description</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-sky-100 bg-white text-[#0F172A]">
+                <tr class="hover:bg-[#F0F9FF] transition">
+                  <td class="py-2.5 px-4 font-heading font-semibold text-[#0284C7] border-r border-sky-100">The primacy of data</td>
+                  <td class="py-2.5 px-4">The theoretical framework is not predetermined but derives directly from the data</td>
+                </tr>
+                <tr class="bg-[#F0F9FF]/50 hover:bg-[#E0F2FE]/60 transition">
+                  <td class="py-2.5 px-4 font-heading font-semibold text-[#0284C7] border-r border-sky-100">Contextualisation</td>
+                  <td class="py-2.5 px-4">Qualitative is context bound, and researchers must be context sensitive</td>
+                </tr>
+                <tr class="hover:bg-[#F0F9FF] transition">
+                  <td class="py-2.5 px-4 font-heading font-semibold text-[#0284C7] border-r border-sky-100">Immersion in the settings</td>
+                  <td class="py-2.5 px-4">Researchers immerse themselves in the natural setting of the people whose thoughts and feelings they wish to explore</td>
+                </tr>
+                <tr class="bg-[#F0F9FF]/50 hover:bg-[#E0F2FE]/60 transition">
+                  <td class="py-2.5 px-4 font-heading font-semibold text-[#0284C7] border-r border-sky-100">The ‘emic’ perspective</td>
+                  <td class="py-2.5 px-4">Focus on the views of the people involved in the research and their perceptions, meaning and interpretations</td>
+                </tr>
+                <tr class="hover:bg-[#F0F9FF] transition">
+                  <td class="py-2.5 px-4 font-heading font-semibold text-[#0284C7] border-r border-sky-100">Thick description</td>
+                  <td class="py-2.5 px-4">Describing the location, people within it, visual picture of the setting, events, verbatim, etc</td>
+                </tr>
+                <tr class="bg-[#F0F9FF]/50 hover:bg-[#E0F2FE]/60 transition">
+                  <td class="py-2.5 px-4 font-heading font-semibold text-[#0284C7] border-r border-sky-100">The research relationship</td>
+                  <td class="py-2.5 px-4">Based on the position of equality</td>
+                </tr>
+                <tr class="hover:bg-[#F0F9FF] transition">
+                  <td class="py-2.5 px-4 font-heading font-semibold text-[#0284C7] border-r border-sky-100">Triangulation</td>
+                  <td class="py-2.5 px-4">Several methods, data collections, investigators</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `
+      },
+      // SLIDE 6
+      {
+        id: 6,
+        module: "หมวด 1: บทนำและรากฐานแนวคิด",
+        title: "ผลลัพธ์การเรียนรู้",
+        reference: "แหล่งอ้างอิง: Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-5 rounded-2xl border border-sky-200 shadow-xs flex flex-col justify-between">
+              <div>
+                <div class="w-10 h-10 rounded-xl bg-[#0284C7] text-white font-heading font-bold flex items-center justify-center mb-3 text-base shadow-xs">1</div>
+                <h3 class="font-heading font-bold text-[#0F172A] text-base sm:text-lg mb-2">อธิบายฐานคิดและเป้าหมายของ QD</h3>
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">แยกแยะการบรรยายอย่างเป็นระบบจากการตีความเชิงทฤษฎีระดับสูงได้</p>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-5 rounded-2xl border border-sky-200 shadow-xs flex flex-col justify-between">
+              <div>
+                <div class="w-10 h-10 rounded-xl bg-[#0EA5E9] text-white font-heading font-bold flex items-center justify-center mb-3 text-base shadow-xs">2</div>
+                <h3 class="font-heading font-bold text-[#0F172A] text-base sm:text-lg mb-2">ออกแบบการศึกษา QD</h3>
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">ระบุคำถามวิจัย เกณฑ์คัดเลือกผู้ให้ข้อมูล และวิธีเก็บข้อมูลที่สอดคล้องกัน</p>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-5 rounded-2xl border border-sky-200 shadow-xs flex flex-col justify-between">
+              <div>
+                <div class="w-10 h-10 rounded-xl bg-[#38BDF8] text-[#0F172A] font-heading font-bold flex items-center justify-center mb-3 text-base shadow-xs">3</div>
+                <h3 class="font-heading font-bold text-[#0F172A] text-base sm:text-lg mb-2">วิเคราะห์ข้อมูลและประเมินคุณภาพ</h3>
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">ฝึกสร้างรหัส หมวดหมู่ ธีม และอธิบายหลักฐานรองรับข้อค้นพบ</p>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 7
+      {
+        id: 7,
+        module: "หมวด 2: ความหมาย คุณค่า และปรัชญาของ QD",
+        title: "QD คืออะไร และไม่ใช่อะไร",
+        reference: "แหล่งอ้างอิง: Sandelowski (2000); Lambert & Lambert (2012)",
+        content: `
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-[#F0F9FF] p-5 rounded-2xl border-l-4 border-l-[#0284C7] border border-sky-200">
+                <h3 class="font-heading font-bold text-[#0284C7] text-base sm:text-lg mb-2 flex items-center gap-2">
+                  <i class="fa-solid fa-file-lines"></i>
+                  การบรรยายที่ครอบคลุม (Comprehensive summary)
+                </h3>
+                <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">มุ่งอธิบายสิ่งที่เกิดขึ้น ใครเกี่ยวข้อง อย่างไร และในบริบทใด ด้วยภาษาที่เข้าใจได้</p>
+              </div>
+
+              <div class="bg-[#F0F9FF] p-5 rounded-2xl border-l-4 border-l-[#0EA5E9] border border-sky-200">
+                <h3 class="font-heading font-bold text-[#0284C7] text-base sm:text-lg mb-2 flex items-center gap-2">
+                  <i class="fa-solid fa-database"></i>
+                  การอยู่ใกล้ข้อมูล (Data-near)
+                </h3>
+                <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ข้อสรุปยึดถ้อยคำและความหมายของผู้ให้ข้อมูล ลดการอนุมานเกินหลักฐาน</p>
+              </div>
+            </div>
+
+            <div class="bg-[#E0F2FE]/80 p-5 rounded-2xl border-l-4 border-l-[#0369A1] border border-sky-300">
+              <h3 class="font-heading font-bold text-[#0F172A] text-base sm:text-lg mb-1.5 flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-[#0284C7]"></i>
+                ไม่ใช่เพียง “วิจัยเชิงคุณภาพทั่วไป”
+              </h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ต้องระบุเหตุผลเชิงระเบียบวิธีและกระบวนการวิเคราะห์ที่เหมาะกับ QD</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 8
+      {
+        id: 8,
+        module: "หมวด 2: ความหมาย คุณค่า และปรัชญาของ QD",
+        title: "เหตุใด QD จึงเป็นแบบวิจัยที่มีคุณค่า",
+        reference: "แหล่งอ้างอิง: Lambert & Lambert (2012); Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs space-y-2.5">
+              <div class="w-10 h-10 rounded-xl bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center text-lg">
+                <i class="fa-solid fa-briefcase-medical"></i>
+              </div>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base">ตอบโจทย์การปฏิบัติ</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">ให้ภาพรวมประสบการณ์ ความต้องการ อุปสรรค และแนวทางดำเนินงานที่นำไปใช้ได้</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs space-y-2.5">
+              <div class="w-10 h-10 rounded-xl bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center text-lg">
+                <i class="fa-solid fa-sliders"></i>
+              </div>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base">ยืดหยุ่นแต่ต้องมีเหตุผล</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">เลือกเครื่องมือและวิธีวิเคราะห์ตามคำถามวิจัย โดยอธิบายความสอดคล้องของการตัดสินใจ</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs space-y-2.5">
+              <div class="w-10 h-10 rounded-xl bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center text-lg">
+                <i class="fa-solid fa-award"></i>
+              </div>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base">เป็นแบบวิจัยที่มีสถานะของตนเอง</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">ไม่จำเป็นต้องอ้างว่าเป็น phenomenology หรือ grounded theory หากไม่ได้ทำตามข้อกำหนดของแนวทางนั้น</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 9
+      {
+        id: 9,
+        module: "หมวด 2: ความหมาย คุณค่า และปรัชญาของ QD",
+        title: "ปรัชญาการวิจัย: รากฐานของการออกแบบ QD",
+        reference: "แหล่งอ้างอิง: Villamin et al. (2025), pp. 5182–5183",
+        content: `
+          <div class="space-y-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Research philosophy</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ชุดสมมติฐานเกี่ยวกับความเป็นจริง การได้มาซึ่งความรู้ และบทบาทคุณค่าของผู้วิจัย ซึ่งส่งผลต่อคำถามและวิธีศึกษา</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ความเชื่อมโยงกับ QD</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">QD มักสอดคล้องกับ naturalistic inquiry และอาจใช้แนวคิด constructivist หรือ pragmatist เมื่ออธิบายเหตุผลชัดเจน</p>
+            </div>
+
+            <div class="bg-[#E0F2FE]/70 p-5 rounded-2xl border border-sky-300">
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mb-1.5">ไม่ใช่สูตรตายตัว</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ไม่ควรสรุปว่า QD ต้องใช้ปรัชญาเพียงแนวเดียว; ควรแสดงความสอดคล้องของฐานคิดกับการตัดสินใจทุกขั้นตอน</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 10
+      {
+        id: 10,
+        module: "หมวด 2: ความหมาย คุณค่า และปรัชญาของ QD",
+        title: "Ontology: ธรรมชาติของความเป็นจริง",
+        reference: "แหล่งอ้างอิง: Villamin et al. (2025); Punaglom et al. (2026)",
+        content: `
+          <div class="space-y-4">
+            <div class="bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] text-white p-4 rounded-2xl shadow-xs">
+              <span class="text-xs font-heading uppercase tracking-wider text-sky-100">คำถามหลัก</span>
+              <p class="text-sm sm:text-base font-heading font-semibold mt-1">ความจริงเกี่ยวกับประสบการณ์ของมนุษย์มีลักษณะอย่างไร และแตกต่างตามบริบทหรือไม่</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+                <span class="inline-block bg-white text-[#0284C7] text-xs font-heading font-bold px-3 py-1 rounded-full border border-sky-200 mb-2">มุมมองแบบ Relativist / Contextual</span>
+                <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ประสบการณ์ของมารดาเด็กสมองพิการอาจแตกต่างตามครอบครัว ความเชื่อ และเงื่อนไขการดูแล</p>
+              </div>
+
+              <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+                <span class="inline-block bg-[#E0F2FE] text-[#0284C7] text-xs font-heading font-bold px-3 py-1 rounded-full mb-2">นัยต่อการออกแบบ QD</span>
+                <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เลือกผู้ให้ข้อมูลที่มีประสบการณ์หลากหลายและรายงานความแตกต่าง แทนการอ้างว่ามีประสบการณ์แบบเดียวกันทั้งหมด</p>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 11
+      {
+        id: 11,
+        module: "หมวด 2: ความหมาย คุณค่า และปรัชญาของ QD",
+        title: "Epistemology: การสร้างความรู้",
+        reference: "แหล่งอ้างอิง: Villamin et al. (2025); Tamayo et al. (2021)",
+        content: `
+          <div class="space-y-4">
+            <div class="bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] text-white p-4 rounded-2xl shadow-xs">
+              <span class="text-xs font-heading uppercase tracking-wider text-sky-100">คำถามหลัก</span>
+              <p class="text-sm sm:text-base font-heading font-semibold mt-1">นักวิจัยเข้าถึงความรู้เกี่ยวกับประสบการณ์และความหมายของผู้เข้าร่วมได้อย่างไร</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+                <span class="inline-block bg-white text-[#0284C7] text-xs font-heading font-bold px-3 py-1 rounded-full border border-sky-200 mb-2">ความรู้เกิดผ่านปฏิสัมพันธ์</span>
+                <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">บทสัมภาษณ์เป็นข้อมูลที่เกิดจากการสนทนาระหว่างผู้ให้ข้อมูลกับผู้วิจัย ไม่ใช่กระจกสะท้อนความจริงอย่างไร้อิทธิพล</p>
+              </div>
+
+              <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+                <span class="inline-block bg-[#E0F2FE] text-[#0284C7] text-xs font-heading font-bold px-3 py-1 rounded-full mb-2">นัยต่อการทำ QD</span>
+                <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ใช้คำถามปลายเปิดและคำถามเจาะลึก ตรวจทานถ้อยคำในบริบท และบันทึกการตัดสินใจเชิงวิเคราะห์</p>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 12
+      {
+        id: 12,
+        module: "หมวด 2: ความหมาย คุณค่า และปรัชญาของ QD",
+        title: "Axiology: คุณค่า จริยธรรม และจุดยืนผู้วิจัย",
+        reference: "แหล่งอ้างอิง: Villamin et al. (2025); Punaglom et al. (2026)",
+        content: `
+          <div class="space-y-4">
+            <div class="bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] text-white p-4 rounded-2xl shadow-xs">
+              <span class="text-xs font-heading uppercase tracking-wider text-sky-100">คำถามหลัก</span>
+              <p class="text-sm sm:text-base font-heading font-semibold mt-1">คุณค่า ประสบการณ์ และความสัมพันธ์เชิงอำนาจของผู้วิจัยส่งผลต่อการศึกษาอย่างไร</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+                <span class="inline-block bg-white text-[#0284C7] text-xs font-heading font-bold px-3 py-1 rounded-full border border-sky-200 mb-2">ตัวอย่างในพยาบาลเด็ก</span>
+                <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">พยาบาลผู้สัมภาษณ์อาจคาดหวังว่ามารดาจะยอมรับโรคได้ จึงต้องระวังคำถามชี้นำและการตัดสินทางศีลธรรม</p>
+              </div>
+
+              <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+                <span class="inline-block bg-[#E0F2FE] text-[#0284C7] text-xs font-heading font-bold px-3 py-1 rounded-full mb-2">แนวปฏิบัติ</span>
+                <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ทำ reflexive journal เคารพความสมัครใจ รักษาความลับ และให้พื้นที่แก่ความรู้สึกที่แตกต่างจากความคาดหวัง</p>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 13
+      {
+        id: 13,
+        module: "หมวด 3: การออกแบบการศึกษา QD",
+        title: "ลักษณะสำคัญของ QD",
+        reference: "แหล่งอ้างอิง: Sandelowski (2000, 2010); Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">1. ศึกษาในบริบทธรรมชาติ (Naturalistic inquiry)</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เข้าใจประสบการณ์ภายใต้เงื่อนไขจริง ไม่ควบคุมหรือจัดกระทำตัวแปร</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">2. มุมมองของผู้ให้ข้อมูลเป็นศูนย์กลาง</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">บันทึกภาษาที่ผู้เข้าร่วมใช้และบริบทที่ช่วยให้เข้าใจข้อความ</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">3. การตีความระดับต่ำถึงปานกลาง</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">สังเคราะห์ความหมายอย่างระมัดระวัง โดยไม่อ้างทฤษฎีใหม่จากข้อมูลเพียงชุดเดียว</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">4. การเก็บและวิเคราะห์ข้อมูลเชื่อมโยงกัน</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ปรับคำถามติดตามหรือกลยุทธ์การคัดเลือกเมื่อพบช่องว่างข้อมูล</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 14
+      {
+        id: 14,
+        module: "หมวด 3: การออกแบบการศึกษา QD",
+        title: "คำถามวิจัยที่เหมาะสม",
+        reference: "แหล่งอ้างอิง: Tamayo et al. (2021); Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <span class="bg-[#0284C7] text-white text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">What: เกิดอะไรขึ้น</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed mt-2.5">เช่น ครูประสบอุปสรรคใดในการใช้ระบบประเมินผลออนไลน์</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <span class="bg-[#0EA5E9] text-white text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">How: ดำเนินการอย่างไร</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed mt-2.5">เช่น ครูจัดการกับอุปสรรคดังกล่าวอย่างไรในงานประจำ</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <span class="bg-[#38BDF8] text-[#0F172A] text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">Who / Where / Context</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed mt-2.5">เช่น ผู้เกี่ยวข้องมีใครบ้าง และบริบทโรงเรียนส่งผลต่อการปฏิบัติอย่างไร</p>
+            </div>
+            <div class="bg-[#E0F2FE]/80 p-5 rounded-2xl border border-sky-300">
+              <span class="bg-[#0369A1] text-white text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">หลีกเลี่ยงข้ออ้างเชิงเหตุและผล</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed mt-2.5">คำถามที่มุ่งทดสอบประสิทธิผลหรือพิสูจน์สาเหตุไม่ใช่เป้าหมายหลักของ QD</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 15
+      {
+        id: 15,
+        module: "หมวด 3: การออกแบบการศึกษา QD",
+        title: "โจทย์ตัวอย่างในบริบทการพยาบาลเด็ก",
+        reference: "แหล่งอ้างอิง: ตัวอย่างเพื่อการสอน; เทียบ Punaglom et al. (2026)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-sm uppercase mb-1.5">หัวข้อจำลอง</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ประสบการณ์ของมารดาในการดูแลเด็กสมองพิการที่บ้านและการได้รับการสนับสนุนจากบุคลากรสุขภาพ</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-sm uppercase mb-1.5">คำถามวิจัย</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">มารดาอธิบายความเปลี่ยนแปลงในชีวิต ความท้าทาย และการสนับสนุนในการดูแลบุตรอย่างไร</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-sm uppercase mb-1.5">วัตถุประสงค์</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เพื่อบรรยายประสบการณ์และความต้องการการสนับสนุนของมารดาที่ดูแลเด็กสมองพิการที่บ้าน</p>
+            </div>
+            <div class="bg-[#E0F2FE]/60 p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0369A1] text-sm uppercase mb-1.5">ขอบเขต</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">โจทย์จำลองนี้ต่างจากบทความ Cultural Meanings of Grief ซึ่งเน้นความหมายทางวัฒนธรรมของความโศกเศร้า</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 16
+      {
+        id: 16,
+        module: "หมวด 3: การออกแบบการศึกษา QD",
+        title: "ความสอดคล้องของการออกแบบ (Methodological congruence)",
+        reference: "แหล่งอ้างอิง: Villamin et al. (2025); Tamayo et al. (2021)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 py-2">
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-4 rounded-2xl border-2 border-[#38BDF8] relative">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-heading font-bold text-[#0284C7]">1. คำถาม → ผู้ให้ข้อมูล</span>
+                <i class="fa-solid fa-arrow-right text-[#0EA5E9]"></i>
+              </div>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เลือกผู้ที่มีประสบการณ์ตรงกับปรากฏการณ์และอธิบายรายละเอียดได้</p>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-4 rounded-2xl border-2 border-[#0EA5E9] relative">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-heading font-bold text-[#0284C7]">2. ผู้ให้ข้อมูล → วิธีเก็บข้อมูล</span>
+                <i class="fa-solid fa-arrow-right text-[#0EA5E9]"></i>
+              </div>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ใช้การสัมภาษณ์ปลายเปิดเพื่อรับฟังเหตุการณ์และมุมมองของผู้ปฏิบัติ</p>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-4 rounded-2xl border-2 border-[#0284C7] relative">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-heading font-bold text-[#0284C7]">3. ข้อมูล → วิธีวิเคราะห์</span>
+                <i class="fa-solid fa-arrow-right text-[#0EA5E9]"></i>
+              </div>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ใช้ qualitative content analysis หรือ thematic analysis ที่รักษาความใกล้ชิดข้อมูล</p>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#E0F2FE]/80 to-white p-4 rounded-2xl border-2 border-[#0369A1] relative">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-heading font-bold text-[#0369A1]">4. ผลลัพธ์ → การนำเสนอ</span>
+                <i class="fa-solid fa-check-circle text-[#0284C7]"></i>
+              </div>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">แสดงหมวดหมู่หรือธีมพร้อมข้อความอ้างอิงและคำอธิบายบริบท</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 17
+      {
+        id: 17,
+        module: "หมวด 3: การออกแบบการศึกษา QD",
+        title: "ฐานคิดและบทบาททฤษฎี",
+        reference: "แหล่งอ้างอิง: Villamin et al. (2025), pp. 5182–5183",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Naturalistic orientation</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ศึกษาปรากฏการณ์ในสภาพจริง โดยรับรู้ว่าความหมายสัมพันธ์กับบริบทและผู้เข้าร่วม</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Pragmatism อาจใช้ประกอบ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ความยืดหยุ่นของ QD ไม่ได้หมายถึงปราศจากฐานคิดหรือเลือกวิธีโดยไม่มีหลัก</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">กรอบแนวคิดใช้ได้ แต่ไม่ควรครอบข้อมูล</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">อาจช่วยสร้างคำถามสัมภาษณ์หรืออภิปรายผล แต่ต้องเปิดรับข้อมูลที่ไม่ตรงกับกรอบ</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ความโปร่งใสของนักวิจัย</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ระบุสมมติฐานเดิม ตำแหน่งแห่งที่ และผลที่อาจมีต่อการเก็บ/ตีความข้อมูล</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 18
+      {
+        id: 18,
+        module: "หมวด 3: การออกแบบการศึกษา QD",
+        title: "ขั้นตอนการดำเนินการศึกษา QD",
+        reference: "แหล่งอ้างอิง: Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-2">
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-5 rounded-2xl border-t-4 border-t-[#38BDF8] border border-sky-200 shadow-xs">
+              <span class="text-xs font-heading font-bold text-[#0284C7] uppercase">ระยะที่ 1</span>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mt-1 mb-2">ระยะวางแผน</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">กำหนดปัญหา ทบทวนหลักฐาน ระบุคำถามวิจัย พิจารณาจริยธรรม และออกแบบกลยุทธ์เลือกผู้ให้ข้อมูล</p>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-5 rounded-2xl border-t-4 border-t-[#0EA5E9] border border-sky-200 shadow-xs">
+              <span class="text-xs font-heading font-bold text-[#0284C7] uppercase">ระยะที่ 2</span>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mt-1 mb-2">ระยะภาคสนาม</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">คัดเลือกผู้เข้าร่วม ขอความยินยอม สัมภาษณ์/สังเกต บันทึกบริบท และถอดเทป</p>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-5 rounded-2xl border-t-4 border-t-[#0284C7] border border-sky-200 shadow-xs">
+              <span class="text-xs font-heading font-bold text-[#0284C7] uppercase">ระยะที่ 3</span>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mt-1 mb-2">ระยะวิเคราะห์</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">อ่านข้อมูลซ้ำ เข้ารหัส จัดหมวดหมู่ สังเคราะห์ธีม/ข้อค้นพบ และตรวจทานกับข้อมูลดิบ</p>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#E0F2FE]/70 to-white p-5 rounded-2xl border-t-4 border-t-[#0369A1] border border-sky-200 shadow-xs">
+              <span class="text-xs font-heading font-bold text-[#0369A1] uppercase">ระยะที่ 4</span>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mt-1 mb-2">ระยะรายงาน</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">นำเสนอผลพร้อมหลักฐานประกอบ ข้อจำกัด การสะท้อนตนเอง และข้อเสนอเชิงปฏิบัติ</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 19
+      {
+        id: 19,
+        module: "หมวด 4: การเลือกผู้ให้ข้อมูลและกรณีศึกษา",
+        title: "การเลือกผู้ให้ข้อมูลหลัก (Key informants)",
+        reference: "แหล่งอ้างอิง: Lambert & Lambert (2012); Tamayo et al. (2021)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ความเหมาะสมสำคัญกว่าความเป็นตัวแทนเชิงสถิติ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เลือกบุคคลที่ให้ข้อมูลเชิงประสบการณ์เกี่ยวกับคำถามวิจัยได้อย่างลุ่มลึก</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Purposive sampling</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">กำหนดคุณสมบัติที่เกี่ยวข้อง เช่น มีประสบการณ์ใช้ระบบดิจิทัลไม่น้อยกว่า 1 ภาคเรียน</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ความหลากหลายที่มีเหตุผล</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">อาจเลือกครูจากระดับชั้นหรือขนาดโรงเรียนต่างกันเพื่อเห็นมุมมองหลากหลาย</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">การเข้าถึงและความสมัครใจ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">พิจารณาความเสี่ยงด้านอำนาจ ความลับ และความสะดวกของผู้เข้าร่วม</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 20
+      {
+        id: 20,
+        module: "หมวด 4: การเลือกผู้ให้ข้อมูลและกรณีศึกษา",
+        title: "กรณีศึกษาจริง: Cultural Meanings of Grief",
+        reference: "แหล่งอ้างอิง: Punaglom et al. (2026), DOI: 10.1177/10436596261465988",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-sm uppercase mb-1.5">ชื่อเรื่อง</h3>
+              <p class="text-xs sm:text-sm font-semibold text-[#0F172A] leading-relaxed">Cultural Meanings and Lived Experiences of Grief Among Mothers of Children With Cerebral Palsy in Northeast Thailand</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-sm uppercase mb-1.5">วัตถุประสงค์</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">สำรวจความหมายทางวัฒนธรรมและประสบการณ์ความโศกเศร้าของมารดาที่ดูแลเด็กสมองพิการในภาคตะวันออกเฉียงเหนือ</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-sm uppercase mb-1.5">รูปแบบวิจัยที่ผู้เขียนระบุ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">Qualitative descriptive design with interpretive elements; constructivist perspective; inductive thematic analysis</p>
+            </div>
+            <div class="bg-[#E0F2FE]/60 p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0369A1] text-sm uppercase mb-1.5">หมายเหตุเชิงระเบียบวิธี</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">บทความมีองค์ประกอบเชิงตีความ จึงใช้สอนการประยุกต์ QD โดยไม่ลดทอนลักษณะการออกแบบตามบทความ</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 21
+      {
+        id: 21,
+        module: "หมวด 4: การเลือกผู้ให้ข้อมูลและกรณีศึกษา",
+        title: "จากวัตถุประสงค์สู่เกณฑ์คัดเข้า",
+        reference: "แหล่งอ้างอิง: Punaglom et al. (2026), DOI: 10.1177/10436596261465988",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">1. กลุ่มเป้าหมาย</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">มารดาผู้เป็นผู้ดูแลหลักของเด็กที่ได้รับการวินิจฉัย cerebral palsy (CP)</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">2. ประสบการณ์ที่เพียงพอ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ดูแลเด็กมาแล้วอย่างน้อย 1 ปี เพื่อให้สามารถสะท้อนประสบการณ์การดูแลในชีวิตจริง</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">3. ความสามารถในการสื่อสาร</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">สามารถสื่อสารภาษาไทยได้ เพื่อร่วมการสัมภาษณ์เชิงลึก</p>
+            </div>
+            <div class="bg-[#E0F2FE]/60 p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0369A1] text-base mb-1.5">4. ตรรกะของเกณฑ์</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เกณฑ์ทั้งหมดเชื่อมตรงกับการเข้าถึงเรื่องเล่าความโศกเศร้าและความหมายที่เกิดจากการดูแล</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 22
+      {
+        id: 22,
+        module: "หมวด 4: การเลือกผู้ให้ข้อมูลและกรณีศึกษา",
+        title: "เกณฑ์คัดออกและการคัดเลือกในบทความจริง",
+        reference: "แหล่งอ้างอิง: Punaglom et al. (2026), DOI: 10.1177/10436596261465988",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Exclusion criteria ตามบทความ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">มารดาที่มีภาวะสุขภาพจิตที่ได้รับการวินิจฉัย หรือกำลังรับการรักษาความผิดปกติทางจิตใจ</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Purposive sampling</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">คัดเลือกเพื่อให้มีความแตกต่างด้านระยะเวลาดูแล โครงสร้างครอบครัว และสมรรถภาพการทำหน้าที่ของเด็ก</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">กระบวนการรับสมัคร</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">พบผู้เข้าเกณฑ์ 34 ราย และสัมภาษณ์จริง 25 ราย หลังประเมิน thematic saturation</p>
+            </div>
+            <div class="bg-[#E0F2FE]/60 p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0369A1] text-base mb-1.5">ประเด็นอภิปราย</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เกณฑ์คัดออกเกี่ยวกับสุขภาพจิตควรมีเหตุผลด้านความปลอดภัยและจริยธรรม และพิจารณาผลต่อความครอบคลุมของประสบการณ์</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 23
+      {
+        id: 23,
+        module: "หมวด 4: การเลือกผู้ให้ข้อมูลและกรณีศึกษา",
+        title: "จำนวนผู้ให้ข้อมูล: ไม่มีเลขตายตัว",
+        reference: "แหล่งอ้างอิง: Tamayo et al. (2021); Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">พิจารณาความเพียงพอของข้อมูล</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ประเมินความลึก ความหลากหลาย ความเฉพาะของกลุ่ม และคุณภาพบทสัมภาษณ์</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Saturation เป็นแนวคิดหนึ่ง ไม่ใช่กฎเดียว</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">อาจใช้การไม่พบหมวดหมู่ใหม่เป็นหลักฐานประกอบ แต่ต้องระบุวิธีประเมินอย่างชัดเจน</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">วางแผนและทบทวนระหว่างเก็บข้อมูล</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ระบุจำนวนเบื้องต้นตามความเป็นไปได้และปรับโดยมีเหตุผลจากการวิเคราะห์</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">รายงานความโปร่งใส</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ชี้แจงจำนวนผู้ติดต่อ ผู้เข้าร่วม และเหตุผลที่หยุดรับข้อมูล</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 24
+      {
+        id: 24,
+        module: "หมวด 5: การเก็บข้อมูลและจริยธรรม",
+        title: "เทคนิคการเก็บรวบรวมข้อมูล",
+        reference: "แหล่งอ้างอิง: Lambert & Lambert (2012); Tamayo et al. (2021)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5 flex items-center gap-2">
+                <i class="fa-solid fa-microphone-lines"></i> สัมภาษณ์กึ่งโครงสร้าง (Semi-structured interview)
+              </h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ใช้คำถามปลายเปิดร่วมกับคำถามเจาะลึก เพื่อให้ได้เหตุการณ์ ตัวอย่าง และความหมายจากผู้เข้าร่วม</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5 flex items-center gap-2">
+                <i class="fa-solid fa-users"></i> สนทนากลุ่ม (Focus group)
+              </h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เหมาะเมื่อปฏิสัมพันธ์ระหว่างผู้เข้าร่วมช่วยเปิดเผยความเห็นร่วมและความแตกต่าง</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5 flex items-center gap-2">
+                <i class="fa-solid fa-eye"></i> การสังเกต (Observation)
+              </h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">บันทึกพฤติกรรม กระบวนการ และเงื่อนไขแวดล้อมที่อาจไม่ปรากฏในคำบอกเล่า</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5 flex items-center gap-2">
+                <i class="fa-solid fa-folder-open"></i> เอกสารและหลักฐานประกอบ
+              </h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ใช้บันทึกการทำงานหรือคู่มือที่ได้รับอนุญาตเพื่อช่วยทำความเข้าใจบริบท</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 25
+      {
+        id: 25,
+        module: "หมวด 5: การเก็บข้อมูลและจริยธรรม",
+        title: "การสร้างแนวคำถามสัมภาษณ์",
+        reference: "แหล่งอ้างอิง: Tamayo et al. (2021); Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">เริ่มจากคำถามกว้างและเป็นกลาง</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] bg-white p-3 rounded-xl border border-sky-100 leading-relaxed">“ช่วยเล่าประสบการณ์การใช้ระบบประเมินผลดิจิทัลในช่วงที่ผ่านมา”</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ใช้คำถามติดตาม (Probes)</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] bg-white p-3 rounded-xl border border-sky-100 leading-relaxed">“เกิดอะไรขึ้นต่อจากนั้น” “ช่วยยกตัวอย่างเหตุการณ์จริง” “สิ่งนั้นส่งผลต่อการทำงานอย่างไร”</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">หลีกเลี่ยงคำถามชี้นำ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">แทน “ระบบใช้งานยากใช่ไหม” ด้วย “ส่วนใดของการใช้งานที่สะดวกหรือไม่สะดวก”</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ทดลองใช้แนวคำถาม</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ตรวจความชัดเจน ลำดับ และความเหมาะสมก่อนเก็บข้อมูลจริง</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 26
+      {
+        id: 26,
+        module: "หมวด 5: การเก็บข้อมูลและจริยธรรม",
+        title: "แนวคำถามสัมภาษณ์จากบทความจริง (1/2)",
+        reference: "แหล่งอ้างอิง: Punaglom et al. (2026), Table 1, p. 3",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <span class="text-xs font-heading font-bold text-[#0284C7] uppercase">1. การเริ่มต้นประสบการณ์</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] font-medium mt-1.5 leading-relaxed">Can you describe your experience when you first learned about your child’s diagnosis?</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <span class="text-xs font-heading font-bold text-[#0284C7] uppercase">2. ชีวิตหลังเริ่มดูแล</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] font-medium mt-1.5 leading-relaxed">How would you describe your life since you began caring for your child?</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <span class="text-xs font-heading font-bold text-[#0284C7] uppercase">3. เหตุการณ์ที่มีความหมาย</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] font-medium mt-1.5 leading-relaxed">What kinds of experiences have been most meaningful or impactful for you as a caregiver?</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <span class="text-xs font-heading font-bold text-[#0284C7] uppercase">4. ช่วงเวลาที่ท้าทาย</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] font-medium mt-1.5 leading-relaxed">Can you describe situations or moments that you have found particularly challenging?</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 27
+      {
+        id: 27,
+        module: "หมวด 5: การเก็บข้อมูลและจริยธรรม",
+        title: "แนวคำถามสัมภาษณ์จากบทความจริง (2/2)",
+        reference: "แหล่งอ้างอิง: Punaglom et al. (2026), Table 1, p. 3; คำถามติดตามเป็นตัวอย่างเพิ่มเติม",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <span class="text-xs font-heading font-bold text-[#0284C7] uppercase">5. การรับมือ</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] font-medium mt-1.5 leading-relaxed">How do you usually respond when you encounter difficulties in caring for your child?</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <span class="text-xs font-heading font-bold text-[#0284C7] uppercase">6. ความเชื่อและวัฒนธรรม</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] font-medium mt-1.5 leading-relaxed">What role, if any, do your beliefs, values, or cultural practices play in your experiences?</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <span class="text-xs font-heading font-bold text-[#0284C7] uppercase">7. แรงสนับสนุน</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] font-medium mt-1.5 leading-relaxed">Can you describe your experiences of support from others in your caregiving journey?</p>
+            </div>
+            <div class="bg-[#E0F2FE]/70 p-5 rounded-2xl border border-sky-300">
+              <span class="text-xs font-heading font-bold text-[#0369A1] uppercase">คำถามติดตามที่ใช้ประกอบ</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] font-medium mt-1.5 leading-relaxed">“ช่วยยกตัวอย่างเหตุการณ์นั้น” “ตอนนั้นท่านรู้สึกอย่างไร” “ใครอยู่ด้วยในขณะนั้น”</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 28
+      {
+        id: 28,
+        module: "หมวด 5: การเก็บข้อมูลและจริยธรรม",
+        title: "การตรวจสอบคุณภาพแนวคำถามสัมภาษณ์",
+        reference: "แหล่งอ้างอิง: Punaglom et al. (2026), p. 2: ผู้เชี่ยวชาญ 3 คน; Tamayo et al. (2021)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Content / conceptual relevance</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ให้ผู้ทรงคุณวุฒิตรวจความสอดคล้องกับวัตถุประสงค์ ความครอบคลุมประเด็น และภาษาที่ไม่ชี้นำ</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Cultural appropriateness</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ตรวจคำศัพท์และบริบทวัฒนธรรม เช่น ความเชื่อเรื่องกรรมหรือความสัมพันธ์ในครอบครัว โดยไม่สมมติว่าทุกคนเชื่อเหมือนกัน</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Pilot interview / cognitive probing</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ทดลองสัมภาษณ์กับผู้มีลักษณะใกล้เคียงกลุ่มศึกษาเพื่อดูความเข้าใจ ลำดับคำถาม และความอ่อนไหวทางอารมณ์</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Revision and documentation</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ปรับถ้อยคำจากข้อเสนอแนะ บันทึกเหตุผล และตรวจความยืดหยุ่นของคำถามเจาะลึก</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 29
+      {
+        id: 29,
+        module: "หมวด 5: การเก็บข้อมูลและจริยธรรม",
+        title: "ความตรงและความเชื่อมั่น: ใช้ศัพท์ให้ถูกบริบท",
+        reference: "แหล่งอ้างอิง: Punaglom et al. (2026); Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">แนวทางที่ใช้ในบทความ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">พัฒนาแนวคำถามจากวรรณกรรมและผ่านการทบทวนโดยผู้เชี่ยวชาญด้านวิจัยเชิงคุณภาพ 3 คน เพื่อพิจารณาความเหมาะสมเชิงแนวคิดและวัฒนธรรม (Punaglom et al., 2026)</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ไม่ใช่แบบวัดมาตรประมาณค่า</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">แนวคำถามปลายเปิดไม่มีข้อกำหนดทั่วไปว่าต้องรายงาน Cronbach’s alpha หรือค่าสัมประสิทธิ์ความเชื่อมั่น</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">IOC / CVI อาจใช้ได้เมื่อเหมาะสม</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">หากมีการให้คะแนนความสอดคล้องเชิงเนื้อหา ต้องชี้แจงเกณฑ์และกระบวนการ แต่ไม่ควรสร้างตัวเลขแทนการตรวจสอบเชิงคุณภาพ</p>
+            </div>
+            <div class="bg-[#E0F2FE]/60 p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0369A1] text-base mb-1.5">คุณภาพเกิดจากทั้งกระบวนการ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ความเหมาะสมของคำถาม ทักษะสัมภาษณ์ การบันทึกข้อมูล การสะท้อนตนเอง และ audit trail ล้วนมีความสำคัญ</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 30
+      {
+        id: 30,
+        module: "หมวด 5: การเก็บข้อมูลและจริยธรรม",
+        title: "จริยธรรมการวิจัยเชิงคุณภาพ",
+        reference: "แหล่งอ้างอิง: Villamin et al. (2025), pp. 5183–5184",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Informed consent</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">อธิบายวัตถุประสงค์ การบันทึกเสียง การนำข้อมูลไปใช้ สิทธิถอนตัว และข้อจำกัดการรักษาความลับ</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Confidentiality ไม่เท่ากับ anonymity</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เมื่อสัมภาษณ์โดยตรงผู้วิจัยทราบตัวตน จึงต้องใช้รหัสแทนชื่อและจำกัดการเข้าถึงไฟล์</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ความสัมพันธ์เชิงอำนาจ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ระมัดระวังการเชิญผู้ใต้บังคับบัญชาหรือนักศึกษาที่อาจรู้สึกว่าปฏิเสธไม่ได้</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">การจัดเก็บข้อมูล</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">แยกข้อมูลระบุตัวตนจากบทถอดเทป กำหนดสิทธิ์เข้าถึงและระยะเวลาจัดเก็บ</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 31
+      {
+        id: 31,
+        module: "หมวด 5: การเก็บข้อมูลและจริยธรรม",
+        title: "คุณภาพของข้อมูลภาคสนาม",
+        reference: "แหล่งอ้างอิง: Tamayo et al. (2021); Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">บันทึกเสียงและถอดเทปอย่างถูกต้อง</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ตรวจความครบถ้วนกับเสียงจริง และทำเครื่องหมายช่วงที่ฟังไม่ชัดโดยไม่เติมคำเอง</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Field notes</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">บันทึกบริบท สถานการณ์ สีหน้า หรือเหตุการณ์ที่จำเป็นต่อการเข้าใจข้อมูล</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Reflexive memo</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">จดข้อสังเกต ความคาดหวัง และการตัดสินใจของผู้วิจัยที่อาจมีอิทธิพลต่อการตีความ</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">วงจรเก็บ–วิเคราะห์</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">อ่านข้อมูลชุดแรกเพื่อค้นหาประเด็นที่ต้องถามเพิ่มเติมในครั้งถัดไป</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 32
+      {
+        id: 32,
+        module: "หมวด 6: การวิเคราะห์ข้อมูลและเวิร์กช็อป",
+        title: "จากข้อมูลดิบสู่ข้อค้นพบ",
+        reference: "แหล่งอ้างอิง: Tamayo et al. (2021); Lambert & Lambert (2012)",
+        content: `
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-2">
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-5 rounded-2xl border-2 border-[#38BDF8] shadow-xs">
+              <div class="flex items-center justify-between mb-2">
+                <span class="w-7 h-7 rounded-full bg-[#0284C7] text-white font-heading font-bold text-xs flex items-center justify-center">1</span>
+                <i class="fa-solid fa-arrow-right text-[#0EA5E9]"></i>
+              </div>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mb-1.5">1. Familiarisation</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">อ่านบทถอดเทปซ้ำเพื่อเข้าใจเรื่องราวและบริบทโดยรวม</p>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-5 rounded-2xl border-2 border-[#0EA5E9] shadow-xs">
+              <div class="flex items-center justify-between mb-2">
+                <span class="w-7 h-7 rounded-full bg-[#0284C7] text-white font-heading font-bold text-xs flex items-center justify-center">2</span>
+                <i class="fa-solid fa-arrow-right text-[#0EA5E9]"></i>
+              </div>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mb-1.5">2. Coding</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">ติดป้ายความหมายให้ข้อความสั้น ๆ โดยไม่รีบด่วนสรุปเป็นธีม</p>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#F0F9FF] to-white p-5 rounded-2xl border-2 border-[#0284C7] shadow-xs">
+              <div class="flex items-center justify-between mb-2">
+                <span class="w-7 h-7 rounded-full bg-[#0284C7] text-white font-heading font-bold text-xs flex items-center justify-center">3</span>
+                <i class="fa-solid fa-arrow-right text-[#0EA5E9]"></i>
+              </div>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mb-1.5">3. Categorisation</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">รวมรหัสที่มีสาระใกล้เคียงเป็นหมวดหมู่ พร้อมกำหนดขอบเขตของแต่ละหมวด</p>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#E0F2FE]/80 to-white p-5 rounded-2xl border-2 border-[#0369A1] shadow-xs">
+              <div class="flex items-center justify-between mb-2">
+                <span class="w-7 h-7 rounded-full bg-[#0369A1] text-white font-heading font-bold text-xs flex items-center justify-center">4</span>
+                <i class="fa-solid fa-check-circle text-[#0284C7]"></i>
+              </div>
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mb-1.5">4. Synthesis and reporting</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">สร้างข้อค้นพบเชิงพรรณนาที่ตอบคำถามวิจัยและใช้คำพูดผู้ให้ข้อมูลรองรับ</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 33
+      {
+        id: 33,
+        module: "หมวด 6: การวิเคราะห์ข้อมูลและเวิร์กช็อป",
+        title: "เลือกแนวทางวิเคราะห์อย่างไร",
+        reference: "แหล่งอ้างอิง: Tamayo et al. (2021); Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Qualitative Content Analysis (QCA)</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เหมาะกับการจัดระบบเนื้อหาและสรุปหมวดหมู่ความหมายที่ใกล้ข้อมูลต้นทาง</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Thematic Analysis (TA)</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ใช้พัฒนาแบบแผนความหมายหรือธีมได้ แต่ต้องชี้แจงแนวทางที่ใช้และระดับการตีความ</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ไม่ใช่เพียงนับคำหรือจัดหัวข้อ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">การวิเคราะห์ต้องแสดงความหมายของข้อความ ความสัมพันธ์ และบริบท</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">รักษาความสอดคล้องกับ QD</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">หลีกเลี่ยงการสร้างข้ออ้างเชิงทฤษฎีที่ห่างจากข้อมูลโดยไม่มีหลักฐาน</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 34
+      {
+        id: 34,
+        module: "หมวด 6: การวิเคราะห์ข้อมูลและเวิร์กช็อป",
+        title: "บทถอดเทปจำลอง: พยาบาลเด็กและมารดา (1/2)",
+        reference: "แหล่งอ้างอิง: บทสนทนาจำลองเพื่อฝึกวิเคราะห์ ไม่ใช่คำพูดจากบทความจริง",
+        content: `
+          <div class="space-y-3 py-1">
+            <!-- Interviewer Bubble -->
+            <div class="flex items-start gap-3">
+              <div class="w-9 h-9 rounded-full bg-[#0284C7] text-white font-heading font-bold text-xs flex items-center justify-center shrink-0">ผู้ถาม</div>
+              <div class="bg-[#E0F2FE] text-[#0F172A] p-3.5 rounded-2xl rounded-tl-none border border-sky-200 max-w-2xl">
+                <span class="block text-xs font-heading font-bold text-[#0284C7] mb-0.5">ผู้สัมภาษณ์</span>
+                <p class="text-xs sm:text-sm leading-relaxed">“ตั้งแต่ทราบว่าลูกเป็นสมองพิการ ชีวิตประจำวันของคุณแม่เปลี่ยนไปอย่างไรบ้างคะ”</p>
+              </div>
+            </div>
+
+            <!-- Mother M01 Bubble -->
+            <div class="flex items-start justify-end gap-3">
+              <div class="bg-[#F0F9FF] text-[#0F172A] p-3.5 rounded-2xl rounded-tr-none border border-sky-200 max-w-2xl">
+                <span class="block text-xs font-heading font-bold text-[#0369A1] mb-0.5">มารดา ม01</span>
+                <p class="text-xs sm:text-sm leading-relaxed">“ตอนแรกตกใจมากค่ะ คิดว่าลูกจะเดินได้เหมือนเด็กคนอื่น พอกลับบ้านต้องคอยอุ้มและพาไปทำกายภาพทุกสัปดาห์ เลยต้องหยุดขายของ”</p>
+              </div>
+              <div class="w-9 h-9 rounded-full bg-[#38BDF8] text-[#0F172A] font-heading font-bold text-xs flex items-center justify-center shrink-0">ม01</div>
+            </div>
+
+            <!-- Interviewer Bubble -->
+            <div class="flex items-start gap-3">
+              <div class="w-9 h-9 rounded-full bg-[#0284C7] text-white font-heading font-bold text-xs flex items-center justify-center shrink-0">ผู้ถาม</div>
+              <div class="bg-[#E0F2FE] text-[#0F172A] p-3.5 rounded-2xl rounded-tl-none border border-sky-200 max-w-2xl">
+                <span class="block text-xs font-heading font-bold text-[#0284C7] mb-0.5">ผู้สัมภาษณ์</span>
+                <p class="text-xs sm:text-sm leading-relaxed">“ช่วงที่ต้องเปลี่ยนการทำงาน คุณแม่รับมืออย่างไรคะ”</p>
+              </div>
+            </div>
+
+            <!-- Mother M01 Bubble -->
+            <div class="flex items-start justify-end gap-3">
+              <div class="bg-[#F0F9FF] text-[#0F172A] p-3.5 rounded-2xl rounded-tr-none border border-sky-200 max-w-2xl">
+                <span class="block text-xs font-heading font-bold text-[#0369A1] mb-0.5">มารดา ม01</span>
+                <p class="text-xs sm:text-sm leading-relaxed">“สามีช่วยดูแลตอนเย็น แต่กลางวันส่วนใหญ่ต้องทำเอง บางวันเหนื่อยจนร้องไห้ พอเห็นลูกยิ้มก็มีแรงต่อค่ะ”</p>
+              </div>
+              <div class="w-9 h-9 rounded-full bg-[#38BDF8] text-[#0F172A] font-heading font-bold text-xs flex items-center justify-center shrink-0">ม01</div>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 35
+      {
+        id: 35,
+        module: "หมวด 6: การวิเคราะห์ข้อมูลและเวิร์กช็อป",
+        title: "บทถอดเทปจำลอง: พยาบาลเด็กและมารดา (2/2)",
+        reference: "แหล่งอ้างอิง: บทสนทนาจำลองเพื่อฝึกวิเคราะห์ ไม่ใช่คำพูดจากบทความจริง",
+        content: `
+          <div class="space-y-3 py-1">
+            <!-- Interviewer Bubble -->
+            <div class="flex items-start gap-3">
+              <div class="w-9 h-9 rounded-full bg-[#0284C7] text-white font-heading font-bold text-xs flex items-center justify-center shrink-0">ผู้ถาม</div>
+              <div class="bg-[#E0F2FE] text-[#0F172A] p-3.5 rounded-2xl rounded-tl-none border border-sky-200 max-w-2xl">
+                <span class="block text-xs font-heading font-bold text-[#0284C7] mb-0.5">ผู้สัมภาษณ์</span>
+                <p class="text-xs sm:text-sm leading-relaxed">“มีใครหรือสิ่งใดช่วยให้คุณแม่ผ่านช่วงยากลำบากได้บ้างคะ”</p>
+              </div>
+            </div>
+
+            <!-- Mother M02 Bubble -->
+            <div class="flex items-start justify-end gap-3">
+              <div class="bg-[#F0F9FF] text-[#0F172A] p-3.5 rounded-2xl rounded-tr-none border border-sky-200 max-w-2xl">
+                <span class="block text-xs font-heading font-bold text-[#0369A1] mb-0.5">มารดา ม02</span>
+                <p class="text-xs sm:text-sm leading-relaxed">“ยายช่วยเฝ้าลูกเวลาพาไปโรงพยาบาลไม่ไหว แล้วพยาบาลสอนท่าอุ้มที่ไม่เจ็บหลัง ทำให้มั่นใจขึ้นค่ะ”</p>
+              </div>
+              <div class="w-9 h-9 rounded-full bg-[#38BDF8] text-[#0F172A] font-heading font-bold text-xs flex items-center justify-center shrink-0">ม02</div>
+            </div>
+
+            <!-- Mother M03 Bubble -->
+            <div class="flex items-start justify-end gap-3">
+              <div class="bg-[#F0F9FF] text-[#0F172A] p-3.5 rounded-2xl rounded-tr-none border border-sky-200 max-w-2xl">
+                <span class="block text-xs font-heading font-bold text-[#0369A1] mb-0.5">มารดา ม03</span>
+                <p class="text-xs sm:text-sm leading-relaxed">“คนแถวบ้านบอกว่าเป็นเรื่องเวรกรรม ฉันฟังแล้วเสียใจ แต่เพื่อนที่มีลูกป่วยเหมือนกันคอยโทรมาคุย เลยไม่รู้สึกอยู่คนเดียว”</p>
+              </div>
+              <div class="w-9 h-9 rounded-full bg-[#0EA5E9] text-white font-heading font-bold text-xs flex items-center justify-center shrink-0">ม03</div>
+            </div>
+
+            <!-- Warning Callout -->
+            <div class="bg-[#E0F2FE]/80 p-3.5 rounded-2xl border-l-4 border-l-[#0284C7] border border-sky-300 flex items-start gap-2.5">
+              <i class="fa-solid fa-triangle-exclamation text-[#0284C7] mt-0.5 shrink-0"></i>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">
+                <b>ข้อควรระวัง:</b> ผู้ให้ข้อมูลอาจตีความความเชื่อทางวัฒนธรรมแตกต่างกัน จึงไม่ควรบังคับข้อความทั้งหมดให้สอดคล้องกับกรอบเดิม
+              </p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 36
+      {
+        id: 36,
+        module: "หมวด 6: การวิเคราะห์ข้อมูลและเวิร์กช็อป",
+        title: "กิจกรรม 1: เข้ารหัสจากบทถอดเทปพยาบาลเด็ก",
+        reference: "แหล่งอ้างอิง: บทถอดเทปจำลองเพื่อการสอน",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">1. ระบุ Meaning units</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ขีดเส้นใต้ “ต้องหยุดขายของ” “ยายช่วยเฝ้าลูก” และ “พยาบาลสอนท่าอุ้ม”</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">2. กำหนดรหัสใกล้ข้อมูล</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เช่น สูญเสียโอกาสทำงาน / การช่วยเหลือจากครอบครัว / การได้รับทักษะดูแลจากพยาบาล</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">3. พิจารณาข้อความที่ขัดแย้ง</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">“คนแถวบ้านบอกว่าเป็นเรื่องเวรกรรม ฉันฟังแล้วเสียใจ” ไม่ควรถูกเข้ารหัสว่า “ความเชื่อช่วยให้ยอมรับ”</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">4. อภิปรายในกลุ่ม</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ระบุคำพูดที่รองรับแต่ละรหัสและอธิบายว่าตีความมากเกินข้อมูลหรือไม่</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 37
+      {
+        id: 37,
+        module: "หมวด 6: การวิเคราะห์ข้อมูลและเวิร์กช็อป",
+        title: "ตัวอย่างเฉลย: ข้อความ → รหัส",
+        reference: "แหล่งอ้างอิง: บทถอดเทปจำลองเพื่อการสอน",
+        content: `
+          <div class="space-y-3">
+            <div class="bg-[#F0F9FF] p-4 rounded-2xl border border-sky-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span class="font-heading font-semibold text-xs sm:text-sm text-[#0F172A] bg-white px-3 py-1.5 rounded-xl border border-sky-100">“ต้องหยุดขายของ”</span>
+              <span class="font-heading font-bold text-xs sm:text-sm text-[#0284C7]">→ รหัส: การเปลี่ยนแปลงบทบาทด้านอาชีพ</span>
+            </div>
+            <div class="bg-[#F0F9FF] p-4 rounded-2xl border border-sky-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span class="font-heading font-semibold text-xs sm:text-sm text-[#0F172A] bg-white px-3 py-1.5 rounded-xl border border-sky-100">“ยายช่วยเฝ้าลูก”</span>
+              <span class="font-heading font-bold text-xs sm:text-sm text-[#0284C7]">→ รหัส: การสนับสนุนด้านการดูแลจากครอบครัว</span>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-sky-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span class="font-heading font-semibold text-xs sm:text-sm text-[#0F172A] bg-[#F0F9FF] px-3 py-1.5 rounded-xl border border-sky-100">“พยาบาลสอนท่าอุ้มที่ไม่เจ็บหลัง”</span>
+              <span class="font-heading font-bold text-xs sm:text-sm text-[#0284C7]">→ รหัส: การได้รับคำแนะนำเชิงปฏิบัติจากพยาบาล</span>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-sky-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span class="font-heading font-semibold text-xs sm:text-sm text-[#0F172A] bg-[#F0F9FF] px-3 py-1.5 rounded-xl border border-sky-100">“ฟังแล้วเสียใจ ... เพื่อน ... โทรมาคุย”</span>
+              <span class="font-heading font-bold text-xs sm:text-sm text-[#0284C7]">→ รหัส: ผลกระทบจากการตีความทางวัฒนธรรม / การสนับสนุนทางอารมณ์จากเพื่อน</span>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 38
+      {
+        id: 38,
+        module: "หมวด 6: การวิเคราะห์ข้อมูลและเวิร์กช็อป",
+        title: "กิจกรรม 2: รวมรหัสเป็นหมวดหมู่",
+        reference: "แหล่งอ้างอิง: บทถอดเทปจำลองเพื่อการสอน",
+        content: `
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+                <span class="bg-[#0284C7] text-white text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">หมวด 1</span>
+                <h3 class="font-heading font-bold text-[#0F172A] text-base mt-2 mb-1.5">ผลกระทบต่อชีวิตประจำวัน</h3>
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">รวมการหยุดงาน ความเหนื่อยล้า และการเปลี่ยนแปลงภาระหน้าที่</p>
+              </div>
+              <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+                <span class="bg-[#0EA5E9] text-white text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">หมวด 2</span>
+                <h3 class="font-heading font-bold text-[#0F172A] text-base mt-2 mb-1.5">ทรัพยากรสนับสนุนการดูแล</h3>
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">รวมความช่วยเหลือจากครอบครัว คำแนะนำพยาบาล และเพื่อนผู้มีประสบการณ์ใกล้เคียง</p>
+              </div>
+              <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+                <span class="bg-[#38BDF8] text-[#0F172A] text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">หมวด 3</span>
+                <h3 class="font-heading font-bold text-[#0F172A] text-base mt-2 mb-1.5">ความหมายและอารมณ์ต่อการดูแล</h3>
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">รวมความคาดหวังเดิม ความเศร้า และการตอบสนองต่อคำอธิบายทางวัฒนธรรม</p>
+              </div>
+            </div>
+
+            <div class="bg-[#E0F2FE]/70 p-4 rounded-2xl border border-sky-300 flex items-start gap-2.5">
+              <i class="fa-solid fa-circle-info text-[#0284C7] mt-0.5 shrink-0"></i>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">
+                <b>ข้อสังเกต:</b> หมวดหมู่เป็นการจัดระบบข้อมูล ไม่ใช่ผลการวิจัยที่ยืนยันจากตัวอย่างเพียงสามราย
+              </p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 39
+      {
+        id: 39,
+        module: "หมวด 6: การวิเคราะห์ข้อมูลและเวิร์กช็อป",
+        title: "กิจกรรม 3: สังเคราะห์ธีมเชิงพรรณนา",
+        reference: "แหล่งอ้างอิง: บทถอดเทปจำลองเพื่อการสอน",
+        content: `
+          <div class="space-y-3.5">
+            <div class="bg-[#F0F9FF] p-4 rounded-2xl border-l-4 border-l-[#0284C7] border border-sky-200">
+              <span class="text-xs font-heading font-bold text-[#0284C7]">ธีมตัวอย่าง 1</span>
+              <p class="text-xs sm:text-sm md:text-base font-medium text-[#0F172A] mt-1">“การดูแลเด็กที่มีภาวะสมองพิการเปลี่ยนรูปแบบการทำงานและกิจวัตรของมารดา”</p>
+            </div>
+
+            <div class="bg-[#F0F9FF] p-4 rounded-2xl border-l-4 border-l-[#0EA5E9] border border-sky-200">
+              <span class="text-xs font-heading font-bold text-[#0284C7]">ธีมตัวอย่าง 2</span>
+              <p class="text-xs sm:text-sm md:text-base font-medium text-[#0F172A] mt-1">“ความช่วยเหลือจากครอบครัว บุคลากรสุขภาพ และเพื่อนช่วยพยุงการดูแลในชีวิตประจำวัน”</p>
+            </div>
+
+            <div class="bg-[#F0F9FF] p-4 rounded-2xl border-l-4 border-l-[#38BDF8] border border-sky-200">
+              <span class="text-xs font-heading font-bold text-[#0284C7]">ธีมตัวอย่าง 3</span>
+              <p class="text-xs sm:text-sm md:text-base font-medium text-[#0F172A] mt-1">“คำอธิบายทางวัฒนธรรมอาจสร้างทั้งความหมายและความเจ็บปวด ขึ้นอยู่กับประสบการณ์รายบุคคล”</p>
+            </div>
+
+            <div class="bg-[#E0F2FE]/80 p-3.5 rounded-2xl border border-sky-300 text-xs sm:text-sm text-[#0F172A]">
+              <b>เงื่อนไขการนำไปใช้จริง:</b> ต้องตรวจสอบกับบทถอดเทปทั้งหมด รวมกรณีแตกต่าง ก่อนยืนยันว่าเป็นธีมของงานวิจัย
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 40
+      {
+        id: 40,
+        module: "หมวด 6: การวิเคราะห์ข้อมูลและเวิร์กช็อป",
+        title: "ตัวอย่างการเขียนผลจากบทสัมภาษณ์จำลอง",
+        reference: "แหล่งอ้างอิง: ตัวอย่างสมมติเพื่อการสอน",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ข้อค้นพบเชิงพรรณนา</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">มารดาอธิบายว่าการดูแลเด็ก CP ทำให้ต้องปรับบทบาทด้านงานและกิจวัตร พร้อมแสวงหาการสนับสนุน</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">หลักฐานคำพูด</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ม01: “เลยต้องหยุดขายของ” และ ม02: “พยาบาลสอนท่าอุ้มที่ไม่เจ็บหลัง ทำให้มั่นใจขึ้น”</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">การตีความที่มีขอบเขต</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ข้อความชี้ถึงความเชื่อมโยงระหว่างภาระการดูแลและทรัพยากรช่วยเหลือในกรณีจำลอง</p>
+            </div>
+            <div class="bg-[#E0F2FE]/70 p-5 rounded-2xl border border-sky-300">
+              <h3 class="font-heading font-bold text-[#0369A1] text-base mb-1.5">สิ่งที่ไม่ควรอ้าง</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ไม่สรุปว่ามารดาเด็ก CP ทุกคนต้องหยุดงาน หรือทุกคนได้รับประโยชน์จากความเชื่อทางวัฒนธรรม</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 41
+      {
+        id: 41,
+        module: "หมวด 7: ความน่าเชื่อถือ ข้อผิดพลาด และบทสรุป",
+        title: "ความน่าเชื่อถือของงานวิจัย (Trustworthiness)",
+        reference: "อ้างอิง: Villamin et al. (2025); แนวคิด Lincoln & Guba (1985)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">• Credibility — ความน่าเชื่อถือของข้อค้นพบ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ตรวจว่าคำบรรยายสะท้อนประสบการณ์ผู้เข้าร่วมและมีหลักฐานรองรับ</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">• Dependability — ความคงเส้นคงวาของกระบวนการ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">บันทึกขั้นตอนการเก็บและวิเคราะห์เพื่อให้ผู้อื่นตรวจสอบตรรกะการตัดสินใจ</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">• Confirmability — การยืนยันจากหลักฐาน</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ใช้บทถอดเทป บันทึกวิเคราะห์ และการสะท้อนตนเองลดข้อสรุปจากอคติส่วนบุคคล</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">• Transferability — การประยุกต์ใช้ในบริบทอื่น</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">อธิบายบริบทและลักษณะผู้ให้ข้อมูลอย่างเพียงพอให้ผู้อ่านพิจารณาความเหมาะสม</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 42
+      {
+        id: 42,
+        module: "หมวด 7: ความน่าเชื่อถือ ข้อผิดพลาด และบทสรุป",
+        title: "เทคนิคส่งเสริมความน่าเชื่อถือ",
+        reference: "อ้างอิง: Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">• Audit trail</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เก็บบันทึกการปรับแนวคำถาม เกณฑ์การเข้ารหัส และเหตุผลที่รวม/แยกหมวดหมู่</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">• Reflexivity</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">บันทึกบทบาทและความคาดหวังของผู้วิจัย รวมถึงความสัมพันธ์กับผู้เข้าร่วม</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">• Member reflection / checking</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">อาจเชิญผู้เข้าร่วมสะท้อนความถูกต้องของข้อมูลหรือการตีความตามความเหมาะสม ไม่ใช่ข้อบังคับทุกงาน</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">• Triangulation</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ใช้แหล่งข้อมูลหรือวิธีเก็บข้อมูลเพิ่มเติมเมื่อมีเหตุผลและทรัพยากรเพียงพอ</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 43
+      {
+        id: 43,
+        module: "หมวด 7: ความน่าเชื่อถือ ข้อผิดพลาด และบทสรุป",
+        title: "Trustworthiness: Credibility และ Dependability",
+        reference: "แหล่งอ้างอิง: Lincoln & Guba (1985); Punaglom et al. (2026), p. 4",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Credibility — member reflection</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">หลังสัมภาษณ์มารดาเด็ก CP อาจทวนสรุปประเด็น เช่น “การดูแลทำให้ต้องหยุดงาน” เพื่อให้ผู้ให้ข้อมูลชี้แจงหรือแก้ความเข้าใจ</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Credibility — peer debriefing / negative cases</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ให้นักวิจัยร่วมทบทวนกรณีมารดาที่ไม่พบว่าความเชื่อทางศาสนาช่วยลดความทุกข์ เพื่อไม่สรุปแบบเหมารวม</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Dependability — audit trail</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เก็บแนวคำถามฉบับแก้ไข บันทึกวันสัมภาษณ์ วิธีถอดเทป รหัสรุ่นต่าง ๆ และเหตุผลที่เปลี่ยนหมวดหมู่</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Dependability — process log</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">บันทึกว่าเหตุใดจึงสัมภาษณ์เพิ่มหรือหยุดเก็บข้อมูล และทีมใช้หลักฐานใดประกอบการตัดสินใจ</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 44
+      {
+        id: 44,
+        module: "หมวด 7: ความน่าเชื่อถือ ข้อผิดพลาด และบทสรุป",
+        title: "Trustworthiness: Confirmability และ Transferability",
+        reference: "แหล่งอ้างอิง: Lincoln & Guba (1985); Punaglom et al. (2026), pp. 4–7",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Confirmability — reflexive memo</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">พยาบาลผู้วิจัยจดว่าตนเคยเชื่อว่าผู้ดูแลทุกคนต้องยอมรับโรคได้ แล้วตรวจว่าความเชื่อนี้กระทบการตั้งรหัสหรือไม่</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Confirmability — evidence trail</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">เก็บตารางเชื่อมข้อความถอดเทป → รหัส → หมวดหมู่ → ธีม พร้อมตัวอย่างข้อความที่ไม่เข้ากับข้อสรุป</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Transferability — thick contextual description</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">อธิบายภูมิภาค ระบบบริการ ลักษณะครอบครัว ระยะเวลาการดูแล และบริบทวัฒนธรรมอย่างไม่เปิดเผยตัวตน</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">Transferability — bounded claims</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ชี้แจงว่าผลจากมารดาในภาคอีสานอาจนำไปเทียบเคียงบริบทอื่นได้เพียงใด โดยไม่อ้างเป็นตัวแทนมารดาทุกกลุ่ม</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 45
+      {
+        id: 45,
+        module: "หมวด 7: ความน่าเชื่อถือ ข้อผิดพลาด และบทสรุป",
+        title: "ข้อผิดพลาดที่พบบ่อย",
+        reference: "แหล่งอ้างอิง: Sandelowski (2000); Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border-l-4 border-l-[#0284C7] border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mb-1.5">เรียกทุกการสัมภาษณ์ว่า QD</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">ชื่อแบบวิจัยต้องสอดคล้องกับคำถาม เป้าหมาย วิธีวิเคราะห์ และรูปแบบผลลัพธ์</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border-l-4 border-l-[#0EA5E9] border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mb-1.5">อ้างว่าปราศจากการตีความ</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">QD ยังต้องตีความและสังเคราะห์ แต่รักษาความใกล้ชิดข้อมูลและเปิดเผยเหตุผล</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border-l-4 border-l-[#38BDF8] border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mb-1.5">กำหนดจำนวนผู้ให้ข้อมูลจากสูตรสำเร็จ</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">ควรพิจารณาคุณภาพข้อมูล ความหลากหลาย และเหตุผลในการยุติการเก็บ</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border-l-4 border-l-[#0369A1] border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0F172A] text-base mb-1.5">รายงานธีมโดยไม่มีหลักฐาน</h3>
+              <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">ทุกหมวดหรือธีมควรมีตัวอย่างข้อความและอธิบายความเชื่อมโยงอย่างชัดเจน</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 46
+      {
+        id: 46,
+        module: "หมวด 7: ความน่าเชื่อถือ ข้อผิดพลาด และบทสรุป",
+        title: "ประเมินระหว่างเรียน: คำถามอภิปราย",
+        reference: "",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <span class="bg-[#0284C7] text-white text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">ข้อ 1: เหตุใดจึงเลือก QD</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed mt-2.5">ให้เหตุผลจากคำถามวิจัยและลักษณะข้อค้นพบที่ต้องการ มากกว่าความสะดวกของผู้วิจัย</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <span class="bg-[#0EA5E9] text-white text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">ข้อ 2: ใครควรเป็นผู้ให้ข้อมูล</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed mt-2.5">เสนอเกณฑ์คัดเลือกครูผู้มีประสบการณ์ตรงและแนวทางสร้างความหลากหลาย</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <span class="bg-[#38BDF8] text-[#0F172A] text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">ข้อ 3: รหัสกับธีมต่างกันอย่างไร</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed mt-2.5">ยกตัวอย่างจากบทถอดเทปและชี้ให้เห็นขั้นตอนการสังเคราะห์</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <span class="bg-[#0369A1] text-white text-xs font-heading font-bold px-2.5 py-0.5 rounded-lg">ข้อ 4: ทำอย่างไรให้ผลตรวจสอบได้</span>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed mt-2.5">ระบุอย่างน้อยสองวิธีพร้อมอธิบายว่าจะใช้ในขั้นตอนใด</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 47
+      {
+        id: 47,
+        module: "หมวด 7: ความน่าเชื่อถือ ข้อผิดพลาด และบทสรุป",
+        title: "สรุปสาระสำคัญ",
+        reference: "แหล่งอ้างอิง: Sandelowski (2000); Villamin et al. (2025)",
+        content: `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">QD เป็นการวิจัยเชิงคุณภาพที่มีเป้าหมายชัดเจน</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">มุ่งคำบรรยายประสบการณ์หรือเหตุการณ์อย่างครอบคลุม ตรงกับข้อมูล และมีประโยชน์ต่อการปฏิบัติ</p>
+            </div>
+            <div class="bg-[#F0F9FF] p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">ความสอดคล้องของทุกขั้นตอนคือหัวใจ</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">คำถาม ผู้ให้ข้อมูล การเก็บข้อมูล การวิเคราะห์ และการนำเสนอผลต้องรองรับกัน</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">คุณภาพไม่เท่ากับความซับซ้อนทางทฤษฎี</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">ความเข้มแข็งอยู่ที่ข้อมูลที่เพียงพอ การวิเคราะห์โปร่งใส และข้อค้นพบที่มีหลักฐาน</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-xs">
+              <h3 class="font-heading font-bold text-[#0284C7] text-base mb-1.5">การวิเคราะห์ต้องย้อนกลับสู่ข้อมูลได้</h3>
+              <p class="text-xs sm:text-sm text-[#0F172A] leading-relaxed">รหัส หมวดหมู่ และธีมต้องมีร่องรอยเชื่อมถึงคำพูดและบริบทของผู้ให้ข้อมูล</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 48
+      {
+        id: 48,
+        module: "หมวด 7: ความน่าเชื่อถือ ข้อผิดพลาด และบทสรุป",
+        title: "เอกสารอ้างอิงหลัก (1/2)",
+        reference: "แหล่งอ้างอิง: เอกสารต้นฉบับที่อาจารย์แนบ",
+        content: `
+          <div class="bg-[#F0F9FF] p-5 sm:p-6 rounded-2xl border border-sky-200 space-y-4 text-xs sm:text-sm text-[#0F172A] leading-relaxed">
+            <div class="bg-white p-4 rounded-xl border border-sky-100">
+              <p><b>Sandelowski, M. (2000).</b><br>Whatever happened to qualitative description? <i>Research in Nursing &amp; Health</i>, 23(4), 334–340. DOI: 10.1002/1098-240X(200008)23:4&lt;334::AID-NUR9&gt;3.0.CO;2-G</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-sky-100">
+              <p><b>Lambert, V. A., &amp; Lambert, C. E. (2012).</b><br>Qualitative descriptive research: An acceptable design. <i>Pacific Rim International Journal of Nursing Research</i>, 16(4), 255–256.</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-sky-100">
+              <p><b>Villamin, P., Lopez, V., Thapa, D. K., &amp; Cleary, M. (2025).</b><br>A worked example of qualitative descriptive design: A step-by-step guide for novice and early career researchers. <i>Journal of Advanced Nursing</i>, 81, 5181–5195. DOI: 10.1111/jan.16481</p>
+            </div>
+          </div>
+        `
+      },
+      // SLIDE 49
+      {
+        id: 49,
+        module: "หมวด 7: ความน่าเชื่อถือ ข้อผิดพลาด และบทสรุป",
+        title: "เอกสารอ้างอิงหลัก (2/2)",
+        reference: "แหล่งอ้างอิง: อ้างอิงจากเอกสารที่แนบ 5 ฉบับ",
+        content: `
+          <div class="bg-[#F0F9FF] p-5 sm:p-6 rounded-2xl border border-sky-200 space-y-3 text-xs sm:text-sm text-[#0F172A] leading-relaxed">
+            <div class="bg-white p-3.5 rounded-xl border border-sky-100">
+              <p><b>Tamayo, N., Lane, A., &amp; Dewart, G. (2021).</b><br>Qualitative description research: An examination of a method for novice nursing researchers. <i>International Journal of Nursing Student Scholarship</i>, 7, Article 51.</p>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-sky-100">
+              <p><b>Furidha, B. W. (2023).</b><br>Comprehension of the descriptive qualitative research method: A critical assessment of the literature. <i>ACITYA WISESA</i>, 2(4). DOI: 10.56943/jmr.v2i4.443</p>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-sky-100">
+              <p><b>Koh, E. T., et al. (2000).</b><br>Descriptive research and qualitative research. In <i>Introduction to Nutrition and Health Research</i>, Chapter 12. ใช้เพื่อแยก descriptive research โดยทั่วไปออกจาก QD</p>
+            </div>
+            <div class="bg-[#E0F2FE]/80 p-3.5 rounded-xl border border-sky-300 text-xs sm:text-sm">
+              <p><b>หมายเหตุด้านหลักฐาน:</b> เนื้อหาหลักยึด Sandelowski, Lambert และ Villamin; บทสนทนาและตัวอย่างการวิเคราะห์เป็นข้อมูลจำลอง</p>
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    // =========================================================================
+    // STATE MANAGEMENT & INITIALIZATION
+    // =========================================================================
+    let currentSlide = 0;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Save pristine HTML source before dynamic DOM modifications
+      pristineHtmlSource = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+      // Handle initial #slide=N hash
+      parseHashAndJump(false);
+
+      renderSidebar();
+      renderSlide(currentSlide);
+      renderGridModal();
+      setupControls();
+
+      // Listen for URL hash changes
+      window.addEventListener("hashchange", () => {
+        parseHashAndJump(true);
+      });
+    });
+
+    function parseHashAndJump(shouldRender) {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith("#slide=")) {
+        const slideNum = parseInt(hash.replace("#slide=", ""), 10);
+        if (!isNaN(slideNum) && slideNum >= 1 && slideNum <= slidesData.length) {
+          currentSlide = slideNum - 1;
+          if (shouldRender) {
+            renderSlide(currentSlide);
+          }
+        }
+      }
+    }
+
+    // =========================================================================
+    // RENDER SLIDE, SIDEBAR & GRID THUMBNAILS
+    // =========================================================================
+    function renderSlide(index) {
+      if (index < 0 || index >= slidesData.length) return;
+      currentSlide = index;
+
+      const data = slidesData[index];
+
+      // Update Header Module Badge
+      document.getElementById("moduleBadge").innerText = data.module;
+
+      // Update Slide Card Body
+      const slideContent = document.getElementById("slideContent");
+      slideContent.classList.remove("fade-slide-in");
+      void slideContent.offsetWidth; // trigger reflow for animation
+      slideContent.classList.add("fade-slide-in");
+
+      if (data.isCover) {
+        slideContent.innerHTML = data.content;
+      } else {
+        slideContent.innerHTML = `
+          <div class="space-y-5">
+            <div class="border-b border-sky-100 pb-3.5">
+              <span class="inline-block text-xs font-heading font-semibold text-[#0284C7] bg-[#F0F9FF] px-3 py-1 rounded-full border border-sky-200 mb-2">
+                ${data.module}
+              </span>
+              <h2 class="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-[#0F172A] leading-snug">
+                ${data.title}
+              </h2>
+            </div>
+            <div>${data.content}</div>
+          </div>
+        `;
+      }
+
+      // Update Citation Badge in Footer
+      const refContainer = document.getElementById("slideReference");
+      if (data.reference) {
+        refContainer.innerHTML = `
+          <span class="inline-flex items-center gap-1.5 bg-[#F0F9FF] text-[#0369A1] px-3 py-1 rounded-full border border-sky-200 font-medium text-[11px] sm:text-xs">
+            <i class="fa-solid fa-bookmark text-[#0EA5E9]"></i>
+            <span>${data.reference}</span>
+          </span>
+        `;
+      } else {
+        refContainer.innerHTML = `
+          <span class="inline-flex items-center gap-1.5 text-slate-400 text-xs">
+            <i class="fa-solid fa-book-open text-[#38BDF8]"></i>
+            <span>Qualitative Descriptive Research (QD)</span>
+          </span>
+        `;
+      }
+
+      // Update Slide Counter Badge
+      document.getElementById("slideNumberBadge").innerText = `${data.id} / ${slidesData.length}`;
+
+      // Update Progress Bar & Numeric Input
+      const progressPct = ((index + 1) / slidesData.length) * 100;
+      document.getElementById("progressBar").style.width = `${progressPct}%`;
+      document.getElementById("slideInput").value = index + 1;
+
+      // Update Prev/Next Button States
+      document.getElementById("prevBtn").disabled = index === 0;
+      document.getElementById("nextBtn").disabled = index === slidesData.length - 1;
+
+      // Sync Sidebar Active Highlight
+      updateSidebarActiveState(index);
+
+      // Update URL Hash without adding history clutter
+      try {
+        history.replaceState(null, "", `#slide=${index + 1}`);
+      } catch (e) {
+        window.location.hash = `slide=${index + 1}`;
+      }
+    }
+
+    function renderSidebar() {
+      const container = document.getElementById("slideList");
+      container.innerHTML = "";
+      let lastModule = "";
+
+      slidesData.forEach((slide, idx) => {
+        if (slide.module !== lastModule) {
+          lastModule = slide.module;
+          const header = document.createElement("div");
+          header.className = "sidebar-group-header text-[11px] font-heading font-bold text-[#0284C7] uppercase tracking-wider px-3 pt-3 pb-1 mt-1 border-t border-sky-100 first:border-t-0 first:pt-1";
+          header.innerText = lastModule;
+          container.appendChild(header);
+        }
+
+        const btn = document.createElement("button");
+        btn.id = `sidebar-item-${idx}`;
+        btn.onclick = () => {
+          jumpToSlide(idx);
+          closeMobileSidebar();
+        };
+        btn.className = "w-full text-left px-3 py-2 rounded-xl text-xs font-body transition flex items-center gap-2.5";
+        btn.innerHTML = `
+          <span class="w-6 h-6 rounded-lg flex items-center justify-center font-heading font-bold text-[11px] shrink-0 sidebar-num">${slide.id}</span>
+          <span class="truncate">${slide.title}</span>
+        `;
+        container.appendChild(btn);
+      });
+
+      updateSidebarActiveState(currentSlide);
+    }
+
+    function updateSidebarActiveState(activeIndex) {
+      slidesData.forEach((_, idx) => {
+        const btn = document.getElementById(`sidebar-item-${idx}`);
+        if (!btn) return;
+        const badge = btn.querySelector(".sidebar-num");
+
+        if (idx === activeIndex) {
+          btn.className = "w-full text-left px-3 py-2 rounded-xl text-xs font-body transition flex items-center gap-2.5 bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] text-white font-semibold shadow-xs";
+          if (badge) badge.className = "w-6 h-6 rounded-lg flex items-center justify-center font-heading font-bold text-[11px] shrink-0 sidebar-num bg-white/20 text-white";
+          btn.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        } else {
+          btn.className = "w-full text-left px-3 py-2 rounded-xl text-xs font-body transition flex items-center gap-2.5 text-[#0F172A] hover:bg-[#F0F9FF] hover:text-[#0284C7]";
+          if (badge) badge.className = "w-6 h-6 rounded-lg flex items-center justify-center font-heading font-bold text-[11px] shrink-0 sidebar-num bg-[#F0F9FF] text-[#0284C7] border border-sky-200";
+        }
+      });
+    }
+
+    function renderGridModal() {
+      const container = document.getElementById("gridContainer");
+      container.innerHTML = "";
+
+      slidesData.forEach((slide, idx) => {
+        const card = document.createElement("button");
+        card.onclick = () => {
+          jumpToSlide(idx);
+          closeGridModal();
+        };
+        card.className = "text-left bg-white hover:bg-[#F0F9FF] border border-sky-200 hover:border-[#0284C7] rounded-2xl p-4 cursor-pointer transition flex flex-col justify-between group h-32 shadow-xs";
+        card.innerHTML = `
+          <div class="flex justify-between items-center w-full">
+            <span class="bg-[#E0F2FE] text-[#0284C7] font-heading font-bold text-[11px] px-2.5 py-0.5 rounded-full">สไลด์ ${slide.id}</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs text-[#0EA5E9] opacity-0 group-hover:opacity-100 transition"></i>
+          </div>
+          <h4 class="text-xs sm:text-sm font-heading font-bold text-[#0F172A] line-clamp-2 group-hover:text-[#0284C7] my-1">
+            ${slide.title}
+          </h4>
+          <span class="text-[11px] text-slate-400 truncate w-full">${slide.module}</span>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // =========================================================================
+    // NAVIGATION, KEYBOARD & TOUCH GESTURES
+    // =========================================================================
+    function nextSlide() {
+      if (currentSlide < slidesData.length - 1) {
+        renderSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        renderSlide(currentSlide - 1);
+      }
+    }
+
+    function jumpToSlide(index) {
+      renderSlide(index);
+    }
+
+    function jumpToInputValue(val) {
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num >= 1 && num <= slidesData.length) {
+        jumpToSlide(num - 1);
+      } else {
+        document.getElementById("slideInput").value = currentSlide + 1;
+      }
+    }
+
+    function firstSlide() {
+      jumpToSlide(0);
+    }
+
+    function lastSlide() {
+      jumpToSlide(slidesData.length - 1);
+    }
+
+    function setupControls() {
+      // Keyboard shortcuts
+      document.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+          e.preventDefault();
+          nextSlide();
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          prevSlide();
+        } else if (e.key === "Home") {
+          e.preventDefault();
+          firstSlide();
+        } else if (e.key === "End") {
+          e.preventDefault();
+          lastSlide();
+        } else if (e.key === "Escape") {
+          closeGridModal();
+          closeMobileSidebar();
+        }
+      });
+
+      // Sidebar Toggle (Desktop & Mobile)
+      document.getElementById("toggleSidebarBtn").addEventListener("click", () => {
+        const sidebar = document.getElementById("sidebar");
+        const backdrop = document.getElementById("sidebarBackdrop");
+        const isMobile = window.innerWidth < 768;
+
+        if (isMobile) {
+          const isHidden = sidebar.classList.contains("-translate-x-full");
+          if (isHidden) {
+            sidebar.classList.remove("-translate-x-full");
+            backdrop.classList.remove("hidden");
+          } else {
+            sidebar.classList.add("-translate-x-full");
+            backdrop.classList.add("hidden");
+          }
+        } else {
+          sidebar.classList.toggle("md:hidden");
+        }
+      });
+
+      // Touch Swipe Support for Mobile/Tablet
+      let touchStartX = 0;
+      let touchEndX = 0;
+      const stage = document.getElementById("slideStage");
+
+      stage.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      stage.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 55) {
+          if (diff > 0) {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
+        }
+      }, { passive: true });
+    }
+
+    function closeMobileSidebar() {
+      if (window.innerWidth < 768) {
+        document.getElementById("sidebar").classList.add("-translate-x-full");
+        document.getElementById("sidebarBackdrop").classList.add("hidden");
+      }
+    }
+
+    // =========================================================================
+    // SHARE LINK & DOWNLOAD SELF-CONTAINED HTML FILE
+    // =========================================================================
+    function copyCurrentSlideLink() {
+      const baseUrl = window.location.href.split("#")[0];
+      const shareUrl = `${baseUrl}#slide=${currentSlide + 1}`;
+
+      const tempInput = document.createElement("textarea");
+      tempInput.value = shareUrl;
+      tempInput.style.position = "fixed";
+      tempInput.style.opacity = "0";
+      document.body.appendChild(tempInput);
+      tempInput.select();
+
+      try {
+        document.execCommand("copy");
+        showToast(`คัดลอกลิงก์สไลด์ที่ ${currentSlide + 1} เรียบร้อยแล้ว!`);
+      } catch (err) {
+        showToast(`ลิงก์หน้านี้คือ: #slide=${currentSlide + 1}`);
+      } finally {
+        document.body.removeChild(tempInput);
+      }
+    }
+
+    function downloadSelfContainedHtml() {
+      try {
+        const htmlContent = pristineHtmlSource || ("<!DOCTYPE html>\n" + document.documentElement.outerHTML);
+        const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "QD-Research-Presentation.html";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast("ดาวน์โหลดไฟล์ QD-Research-Presentation.html สำเร็จ!");
+      } catch (err) {
+        showToast("เกิดข้อผิดพลาดในการดาวน์โหลดไฟล์");
+      }
+    }
+
+    function toggleFullscreen() {
+      const icon = document.getElementById("fullscreenIcon");
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.className = "fa-solid fa-compress";
+        }).catch(() => {
+          showToast("เบราว์เซอร์ไม่รองรับโหมดเต็มหน้าจอในหน้าต่างนี้");
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().then(() => {
+            icon.className = "fa-solid fa-expand";
+          });
+        }
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      document.getElementById("toastMsg").innerText = msg;
+      toast.classList.remove("opacity-0", "pointer-events-none");
+      toast.classList.add("opacity-100");
+      setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0", "pointer-events-none");
+      }, 3200);
+    }
+
+    // =========================================================================
+    // GRID MODAL & KEYWORD SEARCH FILTER
+    // =========================================================================
+    function openGridModal() {
+      const modal = document.getElementById("gridModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeGridModal() {
+      const modal = document.getElementById("gridModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function filterSlides() {
+      const input = document.getElementById("searchInput");
+      const clearBtn = document.getElementById("clearSearchBtn");
+      const query = input.value.trim().toLowerCase();
+
+      if (query.length > 0) {
+        clearBtn.classList.remove("hidden");
+      } else {
+        clearBtn.classList.add("hidden");
+      }
+
+      slidesData.forEach((slide, idx) => {
+        const item = document.getElementById(`sidebar-item-${idx}`);
+        if (!item) return;
+
+        // Strip HTML tags from content for clean text search
+        const plainContent = slide.content.replace(/<[^>]*>/g, " ").toLowerCase();
+        const isMatch =
+          slide.title.toLowerCase().includes(query) ||
+          slide.module.toLowerCase().includes(query) ||
+          slide.reference.toLowerCase().includes(query) ||
+          plainContent.includes(query) ||
+          String(slide.id) === query;
+
+        item.style.display = isMatch ? "flex" : "none";
+      });
+    }
+
+    function clearSearch() {
+      document.getElementById("searchInput").value = "";
+      filterSlides();
+    }
+  </script>
+
+</body></html>
